@@ -1,0 +1,175 @@
+{{ 'stitch-product.css' | asset_url | stylesheet_tag }}
+
+<div class="stitch-product-container">
+  {% comment %} Left Media Col {% endcomment %}
+  <div class="stitch-media-container">
+    {% for block in section.blocks %}
+      {% if block.type == 'badge' %}
+        <div class="stitch-badge" {{ block.shopify_attributes }}>
+          {{ block.settings.text }}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="stitch-image-wrapper">
+      {% if product.featured_media != blank %}
+        <img class="stitch-main-image" src="{{ product.featured_media | image_url: width: 1000 }}" alt="{{ product.title }}" loading="lazy">
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'stitch-main-image placeholder-svg' }}
+      {% endif %}
+    </div>
+  </div>
+
+  {% comment %} Right Info Col {% endcomment %}
+  <div class="stitch-info-container">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        
+        {% when 'title' %}
+          <h1 class="stitch-title" {{ block.shopify_attributes }}>
+            {{ product.title | escape }}
+          </h1>
+
+        {% when 'subtitle' %}
+          <div class="stitch-subtitle" {{ block.shopify_attributes }}>
+            {{ block.settings.text }}
+          </div>
+
+        {% when 'price' %}
+          <div class="stitch-price-row" {{ block.shopify_attributes }}>
+            <span class="stitch-price">{{ product.price | money }}</span>
+            {% if product.selected_or_first_available_variant.unit_price_measurement %}
+              <span class="stitch-unit-price">
+                {{ product.selected_or_first_available_variant.unit_price | money }} 
+                / 
+                {{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}
+                {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+              </span>
+            {% endif %}
+          </div>
+
+        {% when 'rating' %}
+          <div class="stitch-rating" {{ block.shopify_attributes }}>
+            <div class="stitch-stars">★★★★★</div>
+            <div class="stitch-rating-text">{{ block.settings.rating_text }}</div>
+          </div>
+
+        {% when 'description' %}
+          <div class="stitch-description" {{ block.shopify_attributes }}>
+            {{ product.description }}
+          </div>
+
+        {% when 'buy_buttons' %}
+          <div class="stitch-actions" {{ block.shopify_attributes }}>
+            {% form 'product', product %}
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              
+              <div class="stitch-actions-inner" style="display: flex; gap: 20px;">
+                <div class="stitch-quantity">
+                  <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
+                  <input type="number" name="quantity" value="1" min="1">
+                  <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+                </div>
+                
+                <button type="submit" class="stitch-buy-button">
+                  {{ block.settings.button_label }}
+                </button>
+              </div>
+            {% endform %}
+          </div>
+
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Stitch Main Product",
+  "tag": "section",
+  "class": "section-stitch-product",
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Badge Text",
+          "default": "New Gen Drop"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "subtitle",
+      "name": "Subtitle",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Subtitle Text",
+          "default": "Galaretka Myjąca"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "rating",
+      "name": "Rating",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Rating Text",
+          "default": "500+ VIBES"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "DODAJ DO KOSZYKA"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stitch Main Product",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "title" },
+        { "type": "subtitle" },
+        { "type": "price" },
+        { "type": "rating" },
+        { "type": "description" },
+        { "type": "buy_buttons" }
+      ]
+    }
+  ]
+}
+{% endschema %}

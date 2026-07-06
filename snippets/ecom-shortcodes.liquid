@@ -1,0 +1,27 @@
+{% liquid
+    assign start_shortcode = '[ecom-global-block]'
+    assign end_shortcode = '[/ecom-global-block]'
+%}
+{% if content %}
+    {% if content contains start_shortcode %}
+        {% assign blocks = content | split: start_shortcode %}
+        {% assign size = blocks | size %}
+
+        {% for block in blocks %}
+            {% if forloop.first  and size > 1  %}
+                {{ block }}
+            {% else %}
+                {% assign tmp = block | split: end_shortcode %}
+                {% if tmp.size > 0 %}
+                    {% assign block_name = tmp | first | strip | strip_html | strip_newlines %}
+                    {% include block_name %}
+                {% endif %}
+                {% if tmp.size > 1 %}
+                    {{ tmp | last }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {{ content }}
+    {% endif %}
+{% endif %}

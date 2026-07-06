@@ -1,0 +1,190 @@
+<!doctype html>
+  {%- liquid
+    assign iso_code  = request.locale.iso_code
+    assign config_rtl  = settings.right_to_left | default: 'enable-with-list'
+    assign is_rtl = false
+    assign dir = 'ltr'
+    if config_rtl == 'enable-with-list'
+      assign iso_code_ck = iso_code | split: '-' | first | append: ';' | prepend: ';'
+      assign lis_rtl = ';ae;ar;arc;bqi;ckb;dv;fa;glk;ha;he;kwh;ks;ku;mzn;nqo;pnb;ps;sd;ug;ur;yi;'
+      if lis_rtl contains iso_code_ck
+        assign is_rtl = true
+        assign dir = 'rtl'
+      endif
+    elsif config_rtl == 'enable'
+      assign is_rtl = true
+      assign dir = 'rtl'
+    endif
+  -%}
+<html class="no-js hdt-pr-img__effect-{{ settings.effect_secondary_image }} hdt-badge__shape-{{ settings.badge_shape }} dir--{{ dir }}{% if request.design_mode %} shopify-design-mode{% endif %}{% if settings.minimal_products %} hdt-minimal-products{% endif %}{% if settings.hidden_badges %} hdt-hidden-pr-badges{% endif %}{% if settings.hidden_quickview %} hdt-hidden-products-quickview{% endif %}{% if settings.hidden_wishlist %} hdt-hidden-products-wishlist{% endif %}{% if settings.hidden_compare %} hdt-hidden-products-compare{% endif %}{% if settings.uppercase_title %} hdt-pr-uppercase_title{% endif %}" lang="{{ request.locale.iso_code }}" dir="{{ dir }}">  
+  <head>
+    <script>window['omegaBlockScopes']={"youtube":false,"google_tag":true,"google_analytics":true,"fb_pixel":true,"tiktok":true,"twitter":false,"pinterest":false,"shopify":true,"web_pixel":true,"custom":false,"custom_include":[]};function otHasMatch(t){const e=Object.entries(window.omegaBlockScopes).reduce(((t,[e,o])=>(o&&"custom"===e?t.push(...window.omegaBlockScopes.custom_include):o&&window.OMG_BLOCK_URL[e]&&t.push(...window.OMG_BLOCK_URL[e]),t)),[]),o=t.getAttribute("src"),n=t.textContent;return e.some((t=>{const e=new RegExp(t);return e.test(o)||e.test(n)}))}window.OMG_EXTENSION_ENABLED=window.OMG_EXTENSION_ENABLED||!0,window.OMG_BLOCK_URL={google_tag:["googletagmanager.com/gtag/destination","googletagmanager.com/gtag/js","googletagmanager.com/gtag/","https://www.googletagmanager.com/gtm.js","googletagmanager.com/gtag/js"],google_analytics:["google-analytics.com"],fb_pixel:["connect.facebook.net","facebook-pixel.js","facebook-pixel-worker.js","infinite-fb-tiktok-pixels","https://optiapps.xyz/resources/js/optiapp-fb-p.js","one-pixel.js"],web_pixel:["/web-pixel"],shopify:["trekkie.storefront"],tiktok:["analytics.tiktok.com/i18n/pixel","tiktok-multi-pixels.js","tiktok-pixel.js"],pinterest:["https://s.pinimg.com/ct/core.js"],youtube:["www.youtube.com","www.youtube-nocookie.com"],vimeo:["player.vimeo.com"],twitter:["static.ads-twitter.com/uwt.js","static.ads-twitter.com/oct.js"],custom:[]},window.otBlockedStorage={scripts:[],iframes:[]};const otObserver=new MutationObserver((function(t){for(const e of t)if("childList"===e.type&&window.OMG_EXTENSION_ENABLED){const t=Array.from(e.addedNodes),o=t.filter((t=>"IFRAME"===t.tagName)),n=t.filter((t=>"SCRIPT"===t.tagName&&1===t.nodeType));for(const t of n)otHasMatch(t)&&(window.otBlockedStorage.scripts.push(t),t.parentElement&&t.parentElement.removeChild(t));for(const t of o)otHasMatch(t)&&(window.otBlockedStorage.iframes.push(t),t.setAttribute("data-src",t.src),t.removeAttribute("src"),t.style.display="none")}}));function otCheckAllowTracking(){if(void 0===t)function t(t){const e=t+"=",o=decodeURIComponent(document.cookie).split(";");for(let t=0;t<o.length;t++){let n=o[t];for(;" "===n.charAt(0);)n=n.substring(1);if(0===n.indexOf(e))return n.substring(e.length,n.length)}return""}let e=t("cookiesNotification",document);if(e){e=JSON.parse(e);const o=e[0].categoriesSelected;return o.includes("marketing")||o.includes("analytics")}}function otDeniedScript(){otObserver.observe(document.documentElement,{childList:!0,subtree:!0})}function otUnlockScript(){if(window.otBlockedStorage.scripts.length>0){for(const[t,e]of window.otBlockedStorage.scripts.entries()){const t=document.createElement("script");t.type=e.type||"application/javascript",e.src?t.src=e.src:t.textContent=e.textContent,document.head.appendChild(t)}window.otBlockedStorage.scripts=[]}window.otBlockedStorage.iframes.length>0&&(window.otBlockedStorage.iframes.forEach((t=>{t.style.display="block",t.src=t.dataset.src,t.removeAttribute("data-src")})),window.otBlockedStorage.iframes=[])}!otCheckAllowTracking()&&window.OMG_EXTENSION_ENABLED&&otObserver.observe(document.documentElement,{childList:!0,subtree:!0}),addEventListener("DOMContentLoaded",(t=>{const e=document.querySelectorAll("script");Array.from(e).find((t=>t.src&&t.src.includes("consentik-ex-")))||(window.OMG_EXTENSION_ENABLED=!1,otUnlockScript())}));
+</script>
+    <script>window['otkConsent']={"ad_user_data":true,"ad_personalization":true,"ad_storage":true,"analytics_storage":true,"functionality_storage":true,"personalization_storage":true,"security_storage":true,"url_passthrough":false,"ads_data_redaction":false};function otValidateDefault(e) { const t = e[0] ?? !1, o = e[1] ?? !1; if (t && "consent" == t && o && "default" == o) { const t = e[2] ?? {}; if (Object.values(t).length) { const e = Object.keys(t), o = Object.values(t).some((e => "granted" == e)), n = e.includes("cst_default"); return !o || o && n } return !0 } if (t && "consent" == t && o && "update" == o) { return Object.keys(e[2]).includes("cst_update") } return !0 } function gtag() { dataLayer.push(arguments) } window.dataLayer = [], window.dataLayer.push = function (...e) { e.forEach((e => { if (otValidateDefault(e)) { const t = e[0] ?? !1, o = e[1] ?? !1, n = e[2] ?? []; if (t && "consent" == t && o && "update" == o && n && Object.keys(n).includes("cst_update")) { const { cst_update: t, ...o } = n; e[2] = { ...o }, Array.prototype.push.call(this, e) } if (t && "consent" == t && o && "default" == o && n && Object.keys(n).includes("cst_default")) { const { cst_default: t, ...o } = n; e[2] = { ...o }, Array.prototype.push.call(this, e) } else Array.prototype.push.call(this, e) } else console.log("gr d", e) })) }, window.OMG_CONSENT_EXTENSION_ENABLED = !1; const otConsentObserver = new MutationObserver((function (e) { for (const t of e) if ("childList" === t.type) { const e = Array.from(t.addedNodes).filter((e => "SCRIPT" === e.tagName && 1 === e.nodeType)); for (const t of e) { const e = t.getAttribute("src"); if (e && e.includes("consentik-ex")) return window.OMG_CONSENT_EXTENSION_ENABLED = !0, void otConsentObserver.disconnect() } } })); otConsentObserver.observe(document.documentElement, { childList: !0, subtree: !0 }), window.dataLayer = window.dataLayer || [], function (e, t) { e.otCookiesGCM = {}, e.otCookiesGCM = { url_passthrough: !1, ads_data_redaction: !1, config: { ad_user_data: "denied", ad_personalization: "denied", ad_storage: "denied", analytics_storage: "denied", functionality_storage: "denied", personalization_storage: "denied", security_storage: "denied", wait_for_update: 500, region: ["BE","BG","CZ","DK","DE","EE","IE","GR","ES","FR","HR","IT","CY","LV","LT","LU","HU","MT","NL","AT","PL","PT","RO","SI","SK","FI","SE","UK","GB","IS","LI","NO","CH","ME","MK","AL","RS","TR","BA","AM","AZ","BY","MD","GE","UA"] } }, gtag("consent", "default", e.otCookiesGCM.config), gtag("consent", "default", {ad_user_data: "granted",ad_personalization: "granted",ad_storage: "granted",analytics_storage: "granted",functionality_storage: "granted",personalization_storage: "granted",security_storage: "granted",wait_for_update: 500,cst_default: 'granted',}), addEventListener("DOMContentLoaded", (function () { const o = e.otkConsent; let n = function (e, t) { const o = e + "=", n = decodeURIComponent(t.cookie), a = n.split(";"); for (let e = 0; e < a.length; e++) { let t = a[e]; for (; " " === t.charAt(0);)t = t.substring(1); if (0 === t.indexOf(o)) return t.substring(o.length, t.length) } return "" }("cookiesNotification", t), a = !0; if (n && e.OMG_CONSENT_EXTENSION_ENABLED) { n = JSON.parse(n); const t = n[0].categoriesSelected; a = !t.includes("marketing"), e.otCookiesGCM.config = { ad_user_data: o.ad_user_data && t.includes("marketing") ? "granted" : "denied", ad_personalization: o.ad_personalization && t.includes("marketing") ? "granted" : "denied", ad_storage: o.ad_storage && t.includes("marketing") ? "granted" : "denied", analytics_storage: o.analytics_storage && t.includes("analytics") ? "granted" : "denied", functionality_storage: o.functionality_storage && t.includes("necessary") ? "granted" : "denied", personalization_storage: o.personalization_storage && t.includes("preferences") ? "granted" : "denied", security_storage: o.security_storage && t.includes("necessary") ? "granted" : "denied" }, gtag("consent", "update", { ...e.otCookiesGCM.config, cst_update: "granted" }) } e.otCookiesGCM.ads_data_redaction = e.otkConsent.ads_data_redaction && a, e.otCookiesGCM.url_passthrough = e.otkConsent.url_passthrough, e.otCookiesGCM.ads_data_redaction && gtag("set", "ads_data_redaction", e.otCookiesGCM.ads_data_redaction), e.otCookiesGCM.url_passthrough && gtag("set", "url_passthrough", e.otCookiesGCM.url_passthrough) })) }(window, document);</script>
+ {%- render 'ecom_header' -%}
+    {%- unless template == 'product.only_config' and request.design_mode == false -%}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 48, height: 48 }}">
+    {%- endif -%}
+
+    {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+    {%- if settings.library_font == 'google' -%}{{ settings.embed_google_font }}{%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; {{ 'general.meta.tag' | t }} "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t }} {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+
+    {%- liquid
+      render 'social-meta-tags'
+      render 'js-head'
+      render 'css-variables', is_rtl: is_rtl
+      echo 'theme.css' | asset_url | stylesheet_tag
+      echo 'hdt-product-card.scss.css' | asset_url | stylesheet_tag
+      if request.page_type == "policy"
+      echo 'hdt-policy.css' | asset_url | stylesheet_tag
+      endif
+    -%}
+    {{ content_for_header }}
+    {%- endunless -%}
+    <meta name="google-site-verification" content="A7-fPa91U2YLOCDXsGTp4bu7XBZn3jRJVmBp9YURMOI" />
+    <!-- Hotjar Tracking Code for Routines -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:6472839,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+  </head>
+
+  <body class="hdt-page-type-{{ request.page_type }}{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %} template-{{ template.name }}">
+    {%- unless template == 'product.only_config' and request.design_mode == false -%}{%- sections 'header-group' -%}{%- endunless -%}
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {%- if request.page_type == "policy" -%}
+        {%- section 'main-heading' -%}
+      {%- endif -%}
+      {{ content_for_layout }}
+    </main>
+
+    {%- unless template == 'product.only_config' and request.design_mode == false -%}
+    {%- sections 'footer-group' -%}
+    {%- if request.page_type == "index" or request.page_type == "policy" -%}
+    <h1 class="hdt-hidden">{{ page_title | default: shop.name }}</h1>
+    {%- endif -%}
+    {%- render 's-dom-temp' -%}
+    <a class="skip-to-content-link button sr-only" href="#MainContent">
+      {{ 'accessibility.skip_to_text' | t }}
+    </a>
+
+    {%- liquid
+      sections 'system-group'
+      if settings.enable_compare_popup
+        render 'compare-offcanvas'
+      endif
+      # theme-check-disable NestedSnippet
+      render 'system-bottom'
+      # theme-check-enable NestedSnippet
+      render 'structured-data'
+    -%}
+    {%- endunless -%}
+  {%- render "ecom_footer"-%}<script
+src='//eu.fw-cdn.com/12629817/648640.js'
+chat='true' widgetId='2b717cb9-d4f5-4370-a6dc-d7d9a581aedc'>
+</script>
+<script>
+(function () {
+  const SELECTORS = {
+    inventory: '.hdt-product-info__item.hdt-product__inventory, .hdt-product__inventory',
+    quantity: '.hdt-product-info__item.hdt-quantity-wrapp, .hdt-quantity-wrapp, .hdt-product-info__item.hdt-product__quantity'
+  };
+
+  function arrangeOnce() {
+    const inventory = document.querySelector(SELECTORS.inventory);
+    const quantity = document.querySelector(SELECTORS.quantity);
+
+    if (!inventory || !quantity) return;
+
+    // jeśli już w docelowym wrapperze -> nic nie rób
+    if (inventory.closest('.hdt-flex-quantity-inventory') || quantity.closest('.hdt-flex-quantity-inventory')) return;
+
+    // jeśli mają tego samego rodzica -> dodaj klasę parenta (ustawimy mu flex w CSS)
+    if (inventory.parentElement === quantity.parentElement) {
+      inventory.parentElement.classList.add('hdt-flex-quantity-inventory-parent');
+      return;
+    }
+
+    // inaczej: stwórz wrapper i przenieś elementy do niego (przed quantity)
+    const wrapper = document.createElement('div');
+    wrapper.className = 'hdt-flex-quantity-inventory';
+    // wstaw wrapper tam, gdzie znajduje się quantity (po to, by zachować kontekst layoutu)
+    const qParent = quantity.parentElement;
+    qParent.insertBefore(wrapper, quantity);
+    wrapper.appendChild(quantity);
+    wrapper.appendChild(inventory);
+  }
+
+  // wywołaj natychmiast po załadowaniu DOM i po dynamicznych zmianach
+  document.addEventListener('DOMContentLoaded', arrangeOnce);
+  // próbne uruchomienie w krótkim czasie (na wypadek gdyby coś ładowało asynchronicznie)
+  setTimeout(arrangeOnce, 500);
+  setTimeout(arrangeOnce, 1500);
+
+  // obserwator DOM (np. zmiana wariantu, Ajax itp.)
+  const observer = new MutationObserver(function () {
+    arrangeOnce();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+<script>
+document.addEventListener('click', function (e) {
+  // Sprawdzamy, czy kliknięty link to nasz "#otworz-formularz"
+  if (e.target.closest('a[href$="#otworz-formularz"]')) {
+    e.preventDefault(); 
+    
+    // TUTAJ WKLEJASZ KOD Z KLAVIYO:
+    window._klOnsite = window._klOnsite || [];
+    window._klOnsite.push(['openForm', 'T7CrLW']);
+  }
+});
+</script>
+<script>
+document.addEventListener('click', function(e) {
+  // Sprawdzamy czy kliknięto w nasz konkretny link
+  if (e.target.getAttribute('href') === '/#sklep-odstapienie') {
+    e.preventDefault();
+    console.log("Próba otwarcia formularza...");
+
+    // 1. Sprawdź czy obiekt już istnieje
+    if (window.EUWithdrawalForm && typeof window.EUWithdrawalForm.open === 'function') {
+      window.EUWithdrawalForm.open();
+    } 
+    // 2. Jeśli nie, wyślij zdarzenie, którego wtyczka może nasłuchiwać
+    else {
+      window.dispatchEvent(new CustomEvent('eu-withdrawal:open', { 
+        detail: { trigger: e.target } 
+      }));
+      console.log("Wysłano event eu-withdrawal:open");
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+{% comment %}
+  Sidekick Slider Section
+  Odczytuje metaobiekty sidekick_slider i renderuje slider
+  z automatyczną zmianą co 6s, płynnymi przejściami i strzałkami.
+{% endcomment %}
+
+{%- assign now_ts = 'now' | date: '%s' | plus: 0 -%}
+{%- assign all_sliders = shop.metaobjects['sidekick_slider'].values -%}
+
+{%- assign active_sliders = '' | split: '' -%}
+{%- for slider in all_sliders -%}
+  {%- assign start_val = slider['start_date'].value -%}
+  {%- assign end_val   = slider['end_date'].value -%}
+  {%- assign start_ts  = start_val | date: '%s' | plus: 0 -%}
+  {%- assign end_ts    = end_val   | date: '%s' | plus: 0 -%}
+
+  {%- assign after_start = true -%}
+  {%- if start_val != blank and now_ts < start_ts -%}
+    {%- assign after_start = false -%}
+  {%- endif -%}
+
+  {%- assign before_end = true -%}
+  {%- if end_val != blank and now_ts > end_ts -%}
+    {%- assign before_end = false -%}
+  {%- endif -%}
+
+  {%- if after_start and before_end -%}
+    {%- assign active_sliders = active_sliders | append: slider.system.id | append: ',' -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign active_ids = active_sliders | split: ',' | compact -%}
+
+{%- if active_ids.size > 0 -%}
+<div
+  class="sk-slider"
+  data-autoplay="true"
+  data-interval="6000"
+  aria-label="Slider promocyjny"
+>
+  <div class="sk-slider__track">
+    {%- for slider_id in active_ids -%}
+      {%- for slider in all_sliders -%}
+        {%- if slider.system.id == slider_id -%}
+          {%- assign img_desktop = slider['image_desktop'].value -%}
+          {%- assign img_mobile  = slider['image_mobile'].value  -%}
+          {%- assign slide_url   = slider['link_url'].value      -%}
+          {%- assign slide_title = slider['title'].value         -%}
+          {%- assign slide_desc  = slider['description'].value   -%}
+
+          <div
+            class="sk-slider__slide{% if forloop.first %} is-active{% endif %}"
+            aria-hidden="{% unless forloop.first %}true{% else %}false{% endunless %}"
+          >
+            {%- if slide_url != blank -%}
+              <a href="{{ slide_url }}" class="sk-slider__link" tabindex="{% unless forloop.first %}-1{% else %}0{% endunless %}">
+            {%- endif -%}
+
+            {%- if img_desktop != blank -%}
+              <picture>
+                {%- if img_mobile != blank -%}
+                  <source
+                    media="(max-width: 749px)"
+                    srcset="{{ img_mobile | image_url: width: 800 }} 800w, {{ img_mobile | image_url: width: 1200 }} 1200w"
+                    sizes="100vw"
+                  >
+                {%- endif -%}
+                <img
+                  src="{{ img_desktop | image_url: width: 1920 }}"
+                  srcset="{{ img_desktop | image_url: width: 800 }} 800w, {{ img_desktop | image_url: width: 1200 }} 1200w, {{ img_desktop | image_url: width: 1920 }} 1920w"
+                  sizes="100vw"
+                  alt="{{ slide_title | escape }}"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  width="1920"
+                  height="800"
+                  class="sk-slider__img"
+                >
+              </picture>
+            {%- elsif img_mobile != blank -%}
+              <img
+                src="{{ img_mobile | image_url: width: 800 }}"
+                alt="{{ slide_title | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                class="sk-slider__img"
+              >
+            {%- endif -%}
+
+            {%- if slide_title != blank or slide_desc != blank -%}
+              <div class="sk-slider__caption">
+                {%- if slide_title != blank -%}
+                  <p class="sk-slider__caption-title">{{ slide_title | escape }}</p>
+                {%- endif -%}
+                {%- if slide_desc != blank -%}
+                  <p class="sk-slider__caption-desc">{{ slide_desc | escape }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if slide_url != blank -%}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if active_ids.size > 1 -%}
+    <button
+      class="sk-slider__arrow sk-slider__arrow--prev"
+      aria-label="Poprzedni slajd"
+      type="button"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M13 4L7 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button
+      class="sk-slider__arrow sk-slider__arrow--next"
+      aria-label="Następny slajd"
+      type="button"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="sk-slider__dots" role="tablist" aria-label="Slajdy">
+      {%- for slider_id in active_ids -%}
+        <button
+          class="sk-slider__dot{% if forloop.first %} is-active{% endif %}"
+          role="tab"
+          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-label="Slajd {{ forloop.index }}"
+          data-index="{{ forloop.index0 }}"
+          type="button"
+        ></button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+.sk-slider {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: #111;
+}
+.sk-slider__track {
+  display: flex;
+  width: 100%;
+}
+.sk-slider__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+  min-height: {{ section.settings.min_height }}px;
+}
+.sk-slider__slide.is-active {
+  position: relative;
+  opacity: 1;
+  pointer-events: auto;
+}
+.sk-slider__link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sk-slider__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: {{ section.settings.min_height }}px;
+}
+.sk-slider__caption {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  padding: 0 1rem;
+  max-width: 700px;
+  width: 100%;
+}
+.sk-slider__caption-title {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 .4rem;
+}
+.sk-slider__caption-desc {
+  font-size: clamp(.875rem, 1.5vw, 1.125rem);
+  margin: 0;
+  opacity: .9;
+}
+.sk-slider__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+  padding: 0;
+}
+.sk-slider__arrow:hover {
+  background: rgba(255,255,255,.3);
+  transform: translateY(-50%) scale(1.08);
+}
+.sk-slider__arrow--prev { left: 1.25rem; }
+.sk-slider__arrow--next { right: 1.25rem; }
+.sk-slider__dots {
+  position: absolute;
+  bottom: .75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: .5rem;
+  z-index: 10;
+}
+.sk-slider__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.45);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background .2s ease, transform .2s ease;
+}
+.sk-slider__dot.is-active {
+  background: #fff;
+  transform: scale(1.3);
+}
+@media (max-width: 749px) {
+  .sk-slider__arrow { width: 36px; height: 36px; }
+  .sk-slider__arrow--prev { left: .75rem; }
+  .sk-slider__arrow--next { right: .75rem; }
+}
+</style>
+
+<script>
+(function () {
+  var sliderEl = document.querySelector('.sk-slider');
+  if (!sliderEl) return;
+
+  var slides = Array.from(sliderEl.querySelectorAll('.sk-slider__slide'));
+  var dots   = Array.from(sliderEl.querySelectorAll('.sk-slider__dot'));
+  var prev   = sliderEl.querySelector('.sk-slider__arrow--prev');
+  var next   = sliderEl.querySelector('.sk-slider__arrow--next');
+  var current = 0;
+  var timer;
+  var interval = parseInt(sliderEl.dataset.interval, 10) || 6000;
+
+  if (slides.length < 2) return;
+
+  function goTo(index) {
+    slides[current].classList.remove('is-active');
+    slides[current].setAttribute('aria-hidden', 'true');
+    if (dots[current]) {
+      dots[current].classList.remove('is-active');
+      dots[current].setAttribute('aria-selected', 'false');
+    }
+    current = (index + slides.length) % slides.length;
+    slides[current].classList.add('is-active');
+    slides[current].setAttribute('aria-hidden', 'false');
+    if (dots[current]) {
+      dots[current].classList.add('is-active');
+      dots[current].setAttribute('aria-selected', 'true');
+    }
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(function () { goTo(current + 1); }, interval);
+  }
+
+  if (prev) prev.addEventListener('click', function () { goTo(current - 1); startTimer(); });
+  if (next) next.addEventListener('click', function () { goTo(current + 1); startTimer(); });
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      goTo(parseInt(dot.dataset.index, 10));
+      startTimer();
+    });
+  });
+
+  sliderEl.addEventListener('mouseenter', function () { clearInterval(timer); });
+  sliderEl.addEventListener('mouseleave', startTimer);
+
+  var touchStartX = 0;
+  sliderEl.addEventListener('touchstart', function (e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  sliderEl.addEventListener('touchend', function (e) {
+    var diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { goTo(diff > 0 ? current + 1 : current - 1); startTimer(); }
+  }, { passive: true });
+
+  startTimer();
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Sidekick Slider",
+  "tag": "section",
+  "class": "sk-slider-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Minimalna wysokość (px)",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "default": 500
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sidekick Slider"
+    }
+  ]
+}
+{% endschema %}

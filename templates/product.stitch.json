@@ -1,0 +1,58 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product-stitch",
+      "blocks": {
+        "badge": {
+          "type": "badge",
+          "settings": {
+            "text": "NEW GEN DROP"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "subtitle": {
+          "type": "subtitle",
+          "settings": {
+            "text": "GALARETKA MYJĄCA"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {
+            "rating_text": "500+ VIBES"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "button_label": "DODAJ DO KOSZYKA"
+          }
+        }
+      },
+      "block_order": [
+        "badge",
+        "title",
+        "subtitle",
+        "price",
+        "rating",
+        "description",
+        "buy_buttons"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
