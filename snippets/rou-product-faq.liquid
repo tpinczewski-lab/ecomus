@@ -10,7 +10,7 @@
   
   {% if how_to_use != blank %}
   <details class="acc-item" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
-    <summary class="acc-head" itemprop="name">JAK UŻYWAĆ <span class="acc-icon">+</span></summary>
+    <summary class="acc-head" itemprop="name">JAK UŻYWAĆ <span class="acc-icon" aria-hidden="true">+</span></summary>
     <div class="acc-body" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
       <div itemprop="text" class="rte">
         {{ how_to_use | metafield_tag }}
@@ -21,7 +21,7 @@
 
   {% if key_ingredients != blank %}
   <details class="acc-item" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
-    <summary class="acc-head" itemprop="name">KLUCZOWE SKŁADNIKI <span class="acc-icon">+</span></summary>
+    <summary class="acc-head" itemprop="name">KLUCZOWE SKŁADNIKI <span class="acc-icon" aria-hidden="true">+</span></summary>
     <div class="acc-body" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
       <div itemprop="text" class="rte">
         {{ key_ingredients | metafield_tag }}
@@ -31,12 +31,12 @@
   {% endif %}
 
   <details class="acc-item" id="product-ask-acc">
-    <summary class="acc-head">ZAPYTAJ O PRODUKT <span class="acc-icon">+</span></summary>
+    <summary class="acc-head">ZAPYTAJ O PRODUKT <span class="acc-icon" aria-hidden="true">+</span></summary>
     <div class="acc-body">
       {% form 'contact', id: 'ProductContactForm', class: 'acc-form-compact' %}
         {% if form.posted_successfully? %}
           <div class="form-success-message">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#2d8a2d" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20" stroke="#2d8a2d" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
             <span>Wiadomość wysłana! Odpowiemy na <strong>hello@routines.pl</strong> w ciągu 24h.</span>
           </div>
         {% else %}
@@ -46,8 +46,8 @@
 
           <div class="form-inputs-wrapper">
             <input type="hidden" name="contact[subject]" value="Pytanie o produkt: {{ product.title }}">
-            <input type="email" name="contact[email]" placeholder="Twój e-mail" required class="acc-input">
-            <input type="text" name="contact[body]" placeholder="Twoje pytanie..." required class="acc-input">
+            <input type="email" name="contact[email]" aria-label="Twój e-mail" placeholder="Twój e-mail" required class="acc-input">
+            <input type="text" name="contact[body]" aria-label="Twoje pytanie" placeholder="Twoje pytanie..." required class="acc-input">
             <button type="submit" class="acc-submit-btn">WYŚLIJ</button>
           </div>
         {% endif %}

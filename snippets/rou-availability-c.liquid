@@ -16,7 +16,7 @@
   {%- if product.available -%}
     <div class="availability-item">
       <div class="status-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
       <div class="status-text">
         <span class="main-label"><strong>Dostępny</strong> online</span>
@@ -27,7 +27,7 @@
 
   <div class="availability-item">
     <div class="status-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
     </div>
     <div class="status-text">
       <span class="main-label"><strong>Dostępny</strong> w Rossmann</span>
@@ -39,9 +39,9 @@
 </div>
 
 <div id="map-modal-overlay" class="map-modal-overlay">
-  <div class="map-modal-content">
-    <button type="button" id="close-map-modal" class="map-modal-close">&times;</button>
-    <div class="map-modal-header">Znajdź nas w Rossmann</div>
+  <div class="map-modal-content" role="dialog" aria-modal="true" aria-labelledby="map-modal-title">
+    <button type="button" id="close-map-modal" class="map-modal-close" aria-label="Zamknij okno">&times;</button>
+    <div class="map-modal-header" id="map-modal-title">Znajdź nas w Rossmann</div>
     <div class="map-container-inner">
       <stockist-store-locator data-stockist-widget-tag="map_93eyxev3">
         Ładowanie mapy...
@@ -80,7 +80,7 @@
   /* SZARE TEKSTY POD SPODEM */
   .sub-label, .status-link-btn { 
     font-size: 11px; 
-    color: #777; /* Szary kolor dla obu sekcji */
+    color: #6b6b6b; /* Szary kolor dla obu sekcji */
     margin-top: 2px; 
   }
 
@@ -137,15 +137,15 @@
       margin: 15px 0;
     }
     .availability-item { flex: 1; gap: 6px; }
-    .main-label { font-size: 10.5px; }
-    .sub-label, .status-link-btn { font-size: 9.5px; }
+    .main-label { font-size: 12px; }
+    .sub-label, .status-link-btn { font-size: 11px; }
     .status-icon svg { width: 15px; height: 15px; }
     .map-modal-content { height: 85vh; padding: 20px 10px; }
   }
 
   @media (max-width: 380px) {
-    .main-label { font-size: 9px; }
-    .sub-label, .status-link-btn { font-size: 8.5px; }
+    .main-label { font-size: 11px; }
+    .sub-label, .status-link-btn { font-size: 10px; }
   }
 </style>
 
@@ -160,6 +160,7 @@
         e.preventDefault();
         modal.classList.add('is-active');
         document.body.style.overflow = 'hidden';
+        if (closeBtn) closeBtn.focus();
         setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 150);
       });
     }
@@ -167,9 +168,11 @@
     const closeModal = () => {
       modal.classList.remove('is-active');
       document.body.style.overflow = '';
+      if (openBtn) openBtn.focus();
     };
 
     if(closeBtn) closeBtn.addEventListener('click', closeModal);
     if(modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && modal.classList.contains('is-active')) closeModal(); });
   });
 </script>

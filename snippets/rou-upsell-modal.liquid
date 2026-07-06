@@ -8,14 +8,14 @@
 -%}
 
 {%- if upsell_products != blank -%}
-<div class="routines-upsell-wrapper" onclick="openRoutinesModal()">
+<div class="routines-upsell-wrapper" onclick="openRoutinesModal()" role="button" tabindex="0" aria-haspopup="dialog" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openRoutinesModal();}">
   <div class="routines-pill-bar">
     <div class="routines-icon-stack">
       {%- for item in upsell_products limit: 5 -%}
         <img src="{{ item.featured_media | image_url: width: 150 }}"
              width="150" height="150" loading="lazy"
              class="routines-rotating-icon {% if forloop.first %}is-visible{% endif %}"
-             alt="upsell icon">
+             alt="">
       {%- endfor -%}
     </div>
     <div class="routines-text-content">
@@ -23,18 +23,18 @@
       <span class="routines-label-sub">Dobierz do swojej pielęgnacji</span>
     </div>
     <div class="routines-arrow-icon">
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
     </div>
   </div>
 </div>
 
 <div id="RoutinesUpsellModal" class="routines-modal-overlay">
   <div class="fit-modal-backdrop" onclick="closeRoutinesModal()"></div>
-  <div class="routines-modal-container">
-    <button class="routines-modal-close" onclick="closeRoutinesModal()">✕</button>
-    
+  <div class="routines-modal-container" role="dialog" aria-modal="true" aria-labelledby="RoutinesUpsellTitle">
+    <button type="button" class="routines-modal-close" onclick="closeRoutinesModal()" aria-label="Zamknij okno">✕</button>
+
     <div class="routines-modal-header">
-      <h3>Dodaj do swojej pielęgnacji</h3>
+      <h3 id="RoutinesUpsellTitle">Dodaj do swojej pielęgnacji</h3>
     </div>
 
     <div class="routines-products-grid">
@@ -53,7 +53,7 @@
             <button type="button" 
                     class="routines-atc-btn-3d" 
                     onclick="addUpsellToCart(this, '{{ item.first_available_variant.id }}')">
-              <span class="btn-text">DODAJ DO KOSZYKA</span>
+              <span class="btn-text" aria-live="polite">DODAJ DO KOSZYKA</span>
             </button>
             
             <a href="{{ item.url }}" class="routines-details-link">Zobacz szczegóły produktu</a>
@@ -80,7 +80,7 @@
 
   .routines-text-content { display: flex; flex-direction: column; flex-grow: 1; }
   .routines-label-title { font-size: 16px; font-weight: 700; color: #000; line-height: 1.2; }
-  .routines-label-sub { font-size: 13px; color: #888; margin-top: 2px; }
+  .routines-label-sub { font-size: 13px; color: #6b6b6b; margin-top: 2px; }
   .routines-arrow-icon { color: #4E54F0; margin-left: 10px; display: flex; align-items: center; }
 
   /* --- MODAL --- */
@@ -120,7 +120,7 @@
     cursor: pointer; box-shadow: 0 5px 0 #3238b5; transition: all 0.1s ease; top: 0;
   }
   .routines-atc-btn-3d:active { top: 3px; box-shadow: 0 2px 0 #3238b5; }
-  .routines-details-link { display: block; margin-top: 15px; font-size: 11px; color: #bbb; text-decoration: underline; text-align: center; }
+  .routines-details-link { display: block; margin-top: 15px; font-size: 11px; color: #6b6b6b; text-decoration: underline; text-align: center; }
 
   /* --- KARUZELA MOBILE --- */
   @media (max-width: 767px) {
@@ -145,15 +145,29 @@
 </style>
 
 <script>
+var routinesModalOpener = null;
+
 function openRoutinesModal() {
-  document.getElementById('RoutinesUpsellModal').classList.add('active');
+  var modal = document.getElementById('RoutinesUpsellModal');
+  routinesModalOpener = document.activeElement;
+  modal.classList.add('active');
   document.body.style.overflow = 'hidden';
+  var closeBtn = modal.querySelector('.routines-modal-close');
+  if (closeBtn) closeBtn.focus();
 }
 
 function closeRoutinesModal() {
   document.getElementById('RoutinesUpsellModal').classList.remove('active');
   document.body.style.overflow = '';
+  if (routinesModalOpener && routinesModalOpener.focus) routinesModalOpener.focus();
+  routinesModalOpener = null;
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('RoutinesUpsellModal').classList.contains('active')) {
+    closeRoutinesModal();
+  }
+});
 
 function addUpsellToCart(button, variantId) {
   let btnText = button.querySelector('.btn-text');

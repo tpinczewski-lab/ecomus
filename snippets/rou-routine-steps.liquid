@@ -32,7 +32,7 @@
         {% assign current_st = st_1 %}{% if i == 2 %}{% assign current_st = st_2 %}{% elsif i == 3 %}{% assign current_st = st_3 %}{% elsif i == 4 %}{% assign current_st = st_4 %}{% elsif i == 5 %}{% assign current_st = st_5 %}{% elsif i == 6 %}{% assign current_st = st_6 %}{% endif %}
         {% if current_st != blank %}
           {% assign icon_idx = i | minus: 1 %}
-          <div class="step-item {% if nav_counter == 0 %}active{% endif %}" data-index="{{ nav_counter }}">
+          <div class="step-item {% if nav_counter == 0 %}active{% endif %}" data-index="{{ nav_counter }}" role="button" tabindex="0" aria-label="Krok {{ i }}: {{ icon_labels[icon_idx] }}">
             <div class="step-circle">
               <img src="{{ icon_urls[icon_idx] }}" alt="{{ icon_labels[icon_idx] }}" width="24" height="24" loading="lazy">
             </div>
@@ -95,7 +95,7 @@
       {% if sets_count > 1 %}
         <div class="sets-dots">
           {% for set_prod in upsell_sets %}
-            <button class="set-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></button>
+            <button type="button" class="set-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Pokaż zestaw {{ forloop.index }}"></button>
           {% endfor %}
         </div>
       {% endif %}
@@ -192,8 +192,12 @@
       });
     };
     stepItems.forEach(item => {
-      item.onclick = () => {
+      const goTo = () => {
         carousel.scrollTo({ left: carousel.offsetWidth * item.dataset.index, behavior: 'smooth' });
+      };
+      item.onclick = goTo;
+      item.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo(); }
       };
     });
   }

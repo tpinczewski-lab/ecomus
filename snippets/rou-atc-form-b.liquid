@@ -9,17 +9,17 @@
 
     <div class="atc-flex-row">
       <div class="qty-container-slim">
-        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
-        <input type="number" name="quantity" value="1" min="1" class="qty-input-inv no-arrows">
-        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+        <button type="button" class="qty-btn-inv" aria-label="Zmniejsz ilość" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+        <input type="number" name="quantity" aria-label="Ilość" value="1" min="1" class="qty-input-inv no-arrows">
+        <button type="button" class="qty-btn-inv" aria-label="Zwiększ ilość" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
       </div>
 
       <button type="submit" name="add" class="main-atc-button" id="AddToCart-Button">
-        <span class="btn-text">DODAJ DO KOSZYKA</span>
+        <span class="btn-text" aria-live="polite">DODAJ DO KOSZYKA</span>
       </button>
 
-      <button type="button" class="wishlist-btn-small" data-product-handle="{{ product.handle }}" id="wishlist-trigger">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button type="button" class="wishlist-btn-small" aria-label="Dodaj do listy życzeń" data-product-handle="{{ product.handle }}" id="wishlist-trigger">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
         </svg>
       </button>
