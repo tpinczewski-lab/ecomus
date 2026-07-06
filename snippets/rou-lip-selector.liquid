@@ -1,0 +1,134 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 3 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-lip-selector', product: product, section_id: section.id %}
+{% endcomment %}
+{% comment %} --- LOGIKA WYKRYWANIA AKTUALNEGO PRODUKTU --- {% endcomment %}
+{% assign current_url = product.url %}
+
+<div class="lip-selector-refined">
+  <p class="lip-refined-title">Wybierz smak błyszczyka:</p>
+
+  <div class="lip-refined-grid">
+    
+    {% comment %} WARIANT 1: JUICY CHERRY {% endcomment %}
+    <a href="/products/lip-serum-juicy-cherr" 
+       class="lip-opt {% if current_url contains 'juicy-cherr' %}is-active{% endif %}">
+      <span class="fruit-icon" style="background-color: #ffebee;">🍒</span>
+      <span class="text">Juicy Cherry</span>
+    </a>
+
+    {% comment %} WARIANT 2: SUNNY COCONUT {% endcomment %}
+    <a href="/products/lip-serum-sunny-coconut" 
+       class="lip-opt {% if current_url contains 'sunny-coconut' %}is-active{% endif %}">
+      <span class="fruit-icon" style="background-color: #f5f5f5;">🥥</span>
+      <span class="text">Sunny Coconut</span>
+    </a>
+
+    {% comment %} WARIANT 3: SWEET PEACH {% endcomment %}
+    <a href="/products/lip-serum-sweet-peach" 
+       class="lip-opt {% if current_url contains 'sweet-peach' %}is-active{% endif %}">
+      <span class="fruit-icon" style="background-color: #fff3e0;">🍑</span>
+      <span class="text">Sweet Peach</span>
+    </a>
+
+  </div>
+</div>
+
+<style>
+  .lip-selector-refined {
+    margin: 25px 0 30px 0;
+    font-family: 'Poppins', sans-serif;
+    border-top: 1px solid #f2f2f2;
+    padding-top: 20px;
+  }
+
+  .lip-refined-title {
+    font-size: 14px; /* Powiększone z 12px */
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+
+  .lip-refined-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .lip-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px 10px 10px; /* Powiększony padding */
+    border-radius: 50px;
+    border: 1.5px solid #eee;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+  }
+
+  .fruit-icon {
+    width: 32px; /* Powiększone z 28px */
+    height: 32px; /* Powiększone z 28px */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px; /* Powiększone z 16px */
+    transition: transform 0.25s ease;
+  }
+
+  .text {
+    font-size: 14px; /* Powiększone z 13px */
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+  }
+
+  /* STAN AKTYWNY */
+  .lip-opt.is-active {
+    border-color: #000;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+
+  .lip-opt.is-active .text {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .lip-opt.is-active .fruit-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #000;
+  }
+
+  /* HOVER */
+  .lip-opt:not(.is-active):hover {
+    border-color: #bbb;
+    transform: translateY(-2px);
+  }
+
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .lip-refined-grid {
+      gap: 10px;
+    }
+    .lip-opt {
+      padding: 8px 16px 8px 8px;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    .text {
+      font-size: 12px;
+    }
+    .fruit-icon {
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+    }
+  }
+</style>

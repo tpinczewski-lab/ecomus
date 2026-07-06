@@ -1,0 +1,236 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 31 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-routine-steps', product: product, section_id: section.id %}
+{% endcomment %}
+{% comment %} 1. POBRANIE PRODUKTÓW Z METAPÓL {% endcomment %}
+{% assign st_1 = product.metafields.custom.ramka_upsell_oczyszczanie.value %}
+{% assign st_2 = product.metafields.custom.ramka_upsell_tonizacja.value %}
+{% assign st_3 = product.metafields.custom.ramka_upsell_serum.value %}
+{% assign st_4 = product.metafields.custom.ramka_upsell_krem.value %}
+{% assign st_5 = product.metafields.custom.ramka_upsell_peeling.value %}
+{% assign st_6 = product.metafields.custom.ramka_upsell_maska.value %}
+{% assign upsell_sets = product.metafields.custom.ramka_upsell_zestawy.value %}
+
+{% comment %} 2. PRZYGOTOWANIE ETYKIET I IKON {% endcomment %}
+{% assign icon_urls = "https://cdn.shopify.com/s/files/1/0894/7908/6413/files/OCZYSZCZANIE.svg?v=1777365932,https://cdn.shopify.com/s/files/1/0894/7908/6413/files/TONIK.svg?v=1777365932,https://cdn.shopify.com/s/files/1/0894/7908/6413/files/SERUM.svg?v=1777365932,https://cdn.shopify.com/s/files/1/0894/7908/6413/files/KREM.svg?v=1777365932,https://cdn.shopify.com/s/files/1/0894/7908/6413/files/PEELING.svg?v=1777365932,https://cdn.shopify.com/s/files/1/0894/7908/6413/files/MASKA.svg?v=1777365932" | split: ',' %}
+{% assign icon_labels = "OCZYSZCZANIE,TONIZACJA,SERUM,KREM,PEELING,MASKA" | split: ',' %}
+{% assign steps_text = "STEP 1: Oczyszczanie,STEP 2: Tonizacja,STEP 3: Serum,STEP 4: Krem,STEP 5: Peeling,STEP 6: Maska" | split: ',' %}
+
+<div class="routines-final-section" id="RoutineSection-{{ section_id }}">
+  <div class="routines-main-nav">
+    <button class="main-nav-btn active" data-tab="routine">SKOMPLETUJ RUTYNĘ</button>
+    {% if upsell_sets != blank %}
+      <button class="main-nav-btn" data-tab="sets">OSZCZĘDZAJ W ZESTAWIE</button>
+    {% endif %}
+  </div>
+
+  <div class="routines-tab-content active" id="content-routine">
+    <div class="routine-steps-nav">
+      {% assign nav_counter = 0 %}
+      {% for i in (1..6) %}
+        {% assign current_st = st_1 %}{% if i == 2 %}{% assign current_st = st_2 %}{% elsif i == 3 %}{% assign current_st = st_3 %}{% elsif i == 4 %}{% assign current_st = st_4 %}{% elsif i == 5 %}{% assign current_st = st_5 %}{% elsif i == 6 %}{% assign current_st = st_6 %}{% endif %}
+        {% if current_st != blank %}
+          {% assign icon_idx = i | minus: 1 %}
+          <div class="step-item {% if nav_counter == 0 %}active{% endif %}" data-index="{{ nav_counter }}">
+            <div class="step-circle">
+              <img src="{{ icon_urls[icon_idx] }}" alt="{{ icon_labels[icon_idx] }}" width="24" height="24" loading="lazy">
+            </div>
+            <span class="step-label">
+              <span class="step-num">{{ i }}.</span> {{ icon_labels[icon_idx] }}
+            </span>
+          </div>
+          {% assign nav_counter = nav_counter | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="routines-carousel">
+      {% for i in (1..6) %}
+        {% assign current_st = st_1 %}{% if i == 2 %}{% assign current_st = st_2 %}{% elsif i == 3 %}{% assign current_st = st_3 %}{% elsif i == 4 %}{% assign current_st = st_4 %}{% elsif i == 5 %}{% assign current_st = st_5 %}{% elsif i == 6 %}{% assign current_st = st_6 %}{% endif %}
+        {% if current_st != blank %}
+          {% assign text_idx = i | minus: 1 %}
+          <div class="routine-slide">
+            <p class="step-title-text">{{ steps_text[text_idx] }}</p>
+            <div class="product-card-sharp">
+              <div class="prod-img">
+                <img src="{{ current_st.featured_image | image_url: width: 400, height: 400 }}" alt="{{ current_st.title }}" width="400" height="400" loading="lazy">
+              </div>
+              <div class="prod-details">
+                <h3>{{ current_st.title }}</h3>
+                <p class="prod-price-sharp">{{ current_st.price | money_without_trailing_zeros }}</p>
+                <button class="btn-atc-sharp" onclick="addToCartAndScroll({{ current_st.selected_or_first_available_variant.id }}, this)">
+                  DODAJ DO KOSZYKA
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="routines-tab-content" id="content-sets">
+    <p class="set-intro-text">Ten produkt znajduje się w zestawach:</p>
+    {% assign sets_count = upsell_sets.size %}
+    <div class="sets-carousel-wrapper {% if sets_count > 1 %}has-carousel{% endif %}">
+      <div class="sets-carousel-inner">
+        {% for set_prod in upsell_sets %}
+          <div class="set-slide">
+            <div class="product-card-sharp">
+              <div class="prod-img">
+                <img src="{{ set_prod.featured_image | image_url: width: 400, height: 400 }}" alt="{{ set_prod.title }}" width="400" height="400" loading="lazy">
+              </div>
+              <div class="prod-details">
+                <h3>{{ set_prod.title }}</h3>
+                <p class="prod-price-sharp">{{ set_prod.price | money_without_trailing_zeros }}</p>
+                <button class="btn-atc-sharp" onclick="addToCartAndScroll({{ set_prod.selected_or_first_available_variant.id }}, this)">
+                  DODAJ DO KOSZYKA
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      {% if sets_count > 1 %}
+        <div class="sets-dots">
+          {% for set_prod in upsell_sets %}
+            <button class="set-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}"></button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .routines-final-section { width: 100%; padding: 20px 0; background: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; }
+  .routines-main-nav { display: flex; gap: 30px; border-bottom: 1px solid #eee; margin-bottom: 30px; padding: 0 20px; }
+  .main-nav-btn { border: none; background: none; padding: 15px 0; font-weight: 700; font-size: 13px; color: #ccc; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; position: relative; }
+  .main-nav-btn.active { color: #000; }
+  .main-nav-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: #000; }
+
+  .routine-steps-nav { display: flex; justify-content: center; overflow-x: auto; gap: 20px; padding: 10px 20px 30px 20px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+  .routine-steps-nav::-webkit-scrollbar { display: none; }
+  .step-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 95px; scroll-snap-align: center; }
+  .step-circle { width: 76px; height: 76px; border-radius: 50%; border: 1.5px solid #f2f2f2; overflow: hidden; background: #fff; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+  .step-circle img { width: 65%; height: 65%; object-fit: contain; filter: grayscale(100%); opacity: 0.5; }
+  .step-item.active .step-circle { border: 3.5px solid #000; transform: scale(1.05); }
+  .step-item.active .step-circle img { filter: grayscale(0%); opacity: 1; }
+  .step-label { font-size: 10px; font-weight: 700; color: #bbb; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+  .step-item.active .step-label { color: #000; }
+
+  .routines-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; }
+  .routines-carousel::-webkit-scrollbar { display: none; }
+  .routine-slide { min-width: 100%; scroll-snap-align: start; box-sizing: border-box; padding: 0 20px; }
+  .step-title-text { font-size: 16px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; color: #000; }
+
+  .sets-carousel-wrapper.has-carousel .sets-carousel-inner { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 20px; padding-bottom: 15px; }
+  .sets-carousel-wrapper.has-carousel .sets-carousel-inner::-webkit-scrollbar { display: none; }
+  .set-slide { min-width: 100%; scroll-snap-align: start; box-sizing: border-box; }
+  
+  @media (min-width: 769px) {
+    .sets-carousel-wrapper.has-carousel .set-slide { min-width: calc(50% - 10px); }
+  }
+
+  .sets-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
+  .set-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; cursor: pointer; transition: 0.3s; }
+  .set-dot.active { background: #000; width: 24px; border-radius: 4px; }
+
+  .product-card-sharp { display: flex; align-items: center; gap: 20px; background: #fff; padding: 20px; border: 1px solid #f0f0f0; height: 100%; box-sizing: border-box; }
+  .prod-img img { width: 120px; height: 120px; object-fit: contain; }
+  .prod-details { flex: 1; display: flex; flex-direction: column; text-align: left; }
+  .prod-details h3 { font-size: 14px; margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; line-height: 1.2; }
+  
+  /* Nowy styl ceny pod tytułem */
+  .prod-price-sharp { font-size: 16px; font-weight: 400; margin: 0 0 15px 0; color: #000; }
+
+  .btn-atc-sharp { width: 100%; border: 1.5px solid #000; background: #fff; padding: 12px; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
+  .btn-atc-sharp:hover { background: #000; color: #fff; }
+
+  .routines-tab-content { display: none; padding: 0 20px; }
+  .routines-tab-content.active { display: block; }
+  .set-intro-text { font-size: 14px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; color: #000; }
+
+  @media (max-width: 768px) {
+    .routine-steps-nav { justify-content: flex-start; }
+    .product-card-sharp { flex-direction: column; text-align: center; }
+    .prod-details { text-align: center; align-items: center; }
+    .prod-price-sharp { margin-bottom: 10px; }
+  }
+</style>
+
+<script>
+(function() {
+  const container = document.getElementById('RoutineSection-{{ section_id }}');
+  const carousel = container.querySelector('.routines-carousel');
+  const stepNav = container.querySelector('.routine-steps-nav');
+  const stepItems = container.querySelectorAll('.step-item');
+  const tabBtns = container.querySelectorAll('.main-nav-btn');
+  const setsCarousel = container.querySelector('.sets-carousel-inner');
+  const setsDots = container.querySelectorAll('.set-dot');
+
+  tabBtns.forEach(btn => {
+    btn.onclick = () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      container.querySelectorAll('.routines-tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      const content = container.querySelector('#content-' + btn.dataset.tab);
+      if(content) content.classList.add('active');
+    };
+  });
+
+  if (carousel && stepItems.length > 0) {
+    carousel.onscroll = () => {
+      const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+      stepItems.forEach((s, i) => {
+        s.classList.toggle('active', i === index);
+        if (i === index) {
+          const scrollPos = s.offsetLeft - (stepNav.offsetWidth / 2) + (s.offsetWidth / 2);
+          stepNav.scrollTo({ left: scrollPos, behavior: 'smooth' });
+        }
+      });
+    };
+    stepItems.forEach(item => {
+      item.onclick = () => {
+        carousel.scrollTo({ left: carousel.offsetWidth * item.dataset.index, behavior: 'smooth' });
+      };
+    });
+  }
+
+  if (setsCarousel && setsDots.length > 0) {
+    setsCarousel.onscroll = () => {
+      const slideWidth = setsCarousel.querySelector('.set-slide').offsetWidth + 20;
+      const index = Math.round(setsCarousel.scrollLeft / slideWidth);
+      setsDots.forEach((dot, i) => { dot.classList.toggle('active', i === index); });
+    };
+    setsDots.forEach(dot => {
+      dot.onclick = () => {
+        const slideWidth = setsCarousel.querySelector('.set-slide').offsetWidth + 20;
+        setsCarousel.scrollTo({ left: slideWidth * dot.dataset.index, behavior: 'smooth' });
+      };
+    });
+  }
+
+  window.addToCartAndScroll = (id, btn) => {
+    const original = btn.innerHTML;
+    btn.innerHTML = "DODAWANIE...";
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ id: id, quantity: 1 }] })
+    })
+    .then(() => {
+      btn.innerHTML = "DODANO! 👍";
+      document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+      if (carousel && btn.closest('.routines-carousel')) {
+        const nextIdx = Math.round(carousel.scrollLeft / carousel.offsetWidth) + 1;
+        if (nextIdx < stepItems.length) {
+          setTimeout(() => { carousel.scrollTo({ left: carousel.offsetWidth * nextIdx, behavior: 'smooth' }); }, 800);
+        }
+      }
+      setTimeout(() => { btn.innerHTML = original; }, 2500);
+    });
+  };
+})();
+</script>

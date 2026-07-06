@@ -1,0 +1,8 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 61 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-capacity', product: product, section_id: section.id %}
+{% endcomment %}
+{% if product.metafields.custom.pojemnosc %}
+  <p class="hdt-s-text2" style="margin: 8px 0 0;"><strong>Pojemność:</strong> {{ product.metafields.custom.pojemnosc.value }}</p>
+{% endif %}

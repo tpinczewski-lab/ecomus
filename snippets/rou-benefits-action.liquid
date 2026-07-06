@@ -1,0 +1,127 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 33 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-benefits-action', product: product, section_id: section.id %}
+{% endcomment %}
+{% comment %} --- LOGIKA POBIERANIA DANYCH --- {% endcomment %}
+{% assign benefits_list = product.metafields.custom.korzysci.value %}
+{% assign product_desc = product.description %}
+
+<div class="product-info-extended">
+  
+  {% comment %} --- SEKCJA KORZYŚCI (PIGUŁKI) --- {% endcomment %}
+  {% if benefits_list != blank %}
+    <div class="benefits-wrapper">
+      <span class="info-title">Korzyści:</span>
+      <div class="benefits-pills">
+        {% for benefit in benefits_list %}
+          <span class="benefit-tag">{{ benefit }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} --- SEKCJA DZIAŁANIA (OPIS) --- {% endcomment %}
+  {% if product_desc != blank %}
+    <div class="action-wrapper">
+      <span class="info-title">DZIAŁANIE:</span>
+      <div class="action-description">
+        {{ product_desc }}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+<style>
+  :root {
+    --routines-lime: #ccff00;
+  }
+
+  .product-info-extended {
+    width: 100%;
+    margin: 25px 0;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* WSPÓLNY STYL TYTUŁÓW */
+  .info-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 800;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  /* STYL KORZYŚCI */
+  .benefits-wrapper {
+    margin-bottom: 25px;
+  }
+  
+  .benefits-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .benefit-tag {
+    /* ZMIANA: Ciemny grafit zamiast czarnego */
+    background: #333333; 
+    color: #ffffff;
+    padding: 6px 15px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* STYL DZIAŁANIA */
+  .action-wrapper {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+  }
+
+  .action-description {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    text-align: left;
+  }
+
+  .action-description p {
+    margin-bottom: 10px;
+  }
+
+  .action-description strong {
+    color: #000;
+    font-weight: 700;
+  }
+
+  /* DOPASOWANIE MOBILE */
+  @media (max-width: 600px) {
+    .product-info-extended {
+      margin: 20px 0;
+    }
+
+    .info-title {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .action-description {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .benefit-tag {
+      font-size: 11px;
+      padding: 5px 12px;
+    }
+  }
+</style>

@@ -1,0 +1,166 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 3 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-holo-selector', product: product, section_id: section.id %}
+{% endcomment %}
+{% comment %} --- LOGIKA WYKRYWANIA AKTUALNEGO PRODUKTU --- {% endcomment %}
+{% assign current_url = product.url %}
+
+<div class="holo-selector-refined">
+  <p class="holo-refined-title">Wybierz kolor holo drobinek:</p>
+
+  <div class="holo-refined-grid">
+    
+    {% comment %} WARIANT 1: PINK {% endcomment %}
+    <a href="/products/holo-gel-pink-do-twarzy-i-ciala" 
+       class="holo-opt {% if current_url contains 'pink' %}is-active{% endif %}">
+      <span class="diamond-swatch pink-diamond"></span>
+      <span class="text">Pink</span>
+    </a>
+
+    {% comment %} WARIANT 2: GOLD {% endcomment %}
+    <a href="/products/holo-gel-gold-do-twarzy-i-ciala" 
+       class="holo-opt {% if current_url contains 'gold' %}is-active{% endif %}">
+      <span class="diamond-swatch gold-diamond"></span>
+      <span class="text">Gold</span>
+    </a>
+
+    {% comment %} WARIANT 3: SILVER {% endcomment %}
+    <a href="/products/holo-gel-silver-do-twarzy-i-ciala" 
+       class="holo-opt {% if current_url contains 'silver' %}is-active{% endif %}">
+      <span class="diamond-swatch silver-diamond"></span>
+      <span class="text">Silver</span>
+    </a>
+
+  </div>
+</div>
+
+<style>
+  .holo-selector-refined {
+    margin: 25px 0 30px 0;
+    font-family: 'Poppins', sans-serif;
+    border-top: 1px solid #f2f2f2;
+    padding-top: 20px;
+  }
+
+  .holo-refined-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+
+  .holo-refined-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .holo-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 22px 10px 10px;
+    border-radius: 50px;
+    border: 1.5px solid #eee;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+  }
+
+  /* DIAMENTOWE SWATCHE */
+  .diamond-swatch {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    display: block;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+  }
+
+  /* Efekt mieniących się drobinek - SPOWOLNIONY DO 12s */
+  .diamond-swatch::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background-image: 
+      radial-gradient(circle, #fff 1px, transparent 1px),
+      radial-gradient(circle, #fff 1px, transparent 1px);
+    background-size: 4px 4px, 7px 7px;
+    background-position: 0 0, 2px 3px;
+    opacity: 0.5; /* Delikatnie mniejsza widoczność dla spokoju */
+    animation: holo-sparkle 12s linear infinite;
+  }
+
+  .pink-diamond {
+    background: radial-gradient(circle, #ff69b4 0%, #ff1493 100%);
+  }
+  .gold-diamond {
+    background: radial-gradient(circle, #f9d976 0%, #d4af37 100%);
+  }
+  .silver-diamond {
+    background: radial-gradient(circle, #e0e0e0 0%, #a0a0a0 100%);
+  }
+
+  @keyframes holo-sparkle {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    text-transform: capitalize;
+  }
+
+  /* STAN AKTYWNY */
+  .holo-opt.is-active {
+    border-color: #000;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+
+  .holo-opt.is-active .text {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .holo-opt.is-active .diamond-swatch {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+  }
+
+  /* Błysk dla aktywnego diamentu - SPOWOLNIONY DO 3s */
+  .holo-opt.is-active .diamond-swatch::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+    transform: skewX(-25deg);
+    animation: rpc-shine 3s infinite;
+    z-index: 2;
+  }
+
+  @keyframes rpc-shine {
+    100% { left: 200%; }
+  }
+
+  /* HOVER */
+  .holo-opt:not(.is-active):hover {
+    border-color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  }
+
+  @media (max-width: 480px) {
+    .holo-refined-grid { gap: 10px; }
+    .holo-opt { padding: 8px 16px 8px 8px; flex: 1 1 auto; justify-content: center; }
+    .text { font-size: 13px; }
+    .diamond-swatch { width: 28px; height: 28px; }
+  }
+</style>

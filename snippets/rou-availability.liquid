@@ -1,0 +1,92 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 17 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-availability', product: product, section_id: section.id %}
+{% endcomment %}
+{%- comment -%} LOGIKA DYNAMICZNEGO CZASU WYSYŁKI {%- endcomment -%}
+{%- assign current_hour = "now" | date: "%H" | plus: 0 -%}
+
+{%- if current_hour < 13 -%}
+  {%- assign shipping_text = "Zamów do 13:00, a wyślemy dzisiaj" -%}
+{%- else -%}
+  {%- assign shipping_text = "Wyślemy jutro" -%}
+{%- endif -%}
+
+<div class="product-availability-wrapper">
+  {%- if product.available -%}
+    <div class="availability-item">
+      <div class="status-icon">
+        {% comment %} Zielony checkbox {% endcomment %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="status-text">
+        <span class="main-label"><strong>Dostępny</strong> online</span>
+        <span class="sub-label">{{ shipping_text }}</span>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="availability-item exclusivity-info">
+    <div class="status-icon">
+      {% comment %} Szary krzyżyk {% endcomment %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </div>
+    <div class="status-text">
+      <span class="main-label"><strong>Niedostępny</strong> w Rossmann</span>
+      <span class="sub-label">Dostępny wyłącznie na routines.pl</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-availability-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    gap: 40px;
+    margin: 20px 0;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .availability-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .status-icon { padding-top: 3px; flex-shrink: 0; }
+  .status-text { display: flex; flex-direction: column; line-height: 1.3; }
+  
+  .main-label { 
+    font-size: 13px; 
+    color: #000; 
+    white-space: nowrap; 
+  }
+  
+  .sub-label { 
+    font-size: 11px; 
+    color: #777; 
+    margin-top: 2px; 
+  }
+
+  .exclusivity-info .main-label strong {
+    color: #000;
+  }
+
+  @media (max-width: 768px) {
+    .product-availability-wrapper {
+      justify-content: space-between;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .availability-item { flex: 1; gap: 6px; }
+    .main-label { font-size: 10.5px; }
+    .sub-label { font-size: 9.5px; }
+    .status-icon svg { width: 15px; height: 15px; }
+  }
+
+  @media (max-width: 380px) {
+    .main-label { font-size: 9px; }
+    .sub-label { font-size: 8.5px; }
+  }
+</style>

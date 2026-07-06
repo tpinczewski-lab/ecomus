@@ -1,0 +1,8 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 73 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-key-ingredients', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="rou-key-ingredients" style="font-size: clamp(15px, 4vw, 20px); line-height: 1.3;">
+  {{ product.metafields.custom.kluczowe_sk_adniki }}
+</div>

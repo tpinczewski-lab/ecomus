@@ -1,0 +1,162 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 4 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-atc-form-c', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="custom-atc-wrapper">
+  {%- form 'product', product, id: 'custom-atc-form' -%}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+    <div class="atc-flex-row">
+      <div class="qty-container-slim">
+        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+        <input type="number" name="quantity" value="1" min="1" class="qty-input-inv no-arrows">
+        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+      </div>
+
+      <button type="submit" name="add" class="main-atc-button" id="AddToCart-Button">
+        <span class="btn-text">DODAJ DO KOSZYKA</span>
+      </button>
+
+      <button type="button" class="wishlist-btn-small">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </button>
+    </div>
+  {%- endform -%}
+</div>
+
+<script>
+  document.querySelector('#custom-atc-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+    let btn = document.querySelector('#AddToCart-Button');
+    let btnText = btn.querySelector('.btn-text');
+    
+    btnText.innerText = 'DODAJE...';
+
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(item => {
+      btnText.innerText = 'DODANO! 👍';
+      
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: item } }));
+      
+      const cartDrawer = document.querySelector('cart-drawer') || document.querySelector('#CartDrawer');
+      if (cartDrawer && typeof cartDrawer.open === 'function') cartDrawer.open();
+      
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+
+      setTimeout(() => { btnText.innerText = 'DODAJ DO KOSZYKA'; }, 2000);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      btnText.innerText = 'BŁĄD';
+    });
+  });
+</script>
+
+<style>
+  .custom-atc-wrapper { 
+    margin: 15px 0; 
+    width: 100%; 
+    padding-bottom: 8px; 
+  }
+  
+  .atc-flex-row { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    height: 48px; 
+  }
+
+  .qty-container-slim {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #4E54F0;
+    border-radius: 50px;
+    height: 100%;
+    min-width: 85px;
+  }
+  
+  .qty-btn-inv {
+    background: transparent;
+    border: none;
+    color: #4E54F0;
+    cursor: pointer;
+    font-size: 16px;
+    width: 28px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .qty-input-inv.no-arrows {
+    background: transparent;
+    border: none;
+    color: #4E54F0;
+    text-align: center;
+    width: 25px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    -moz-appearance: textfield;
+  }
+  .qty-input-inv::-webkit-outer-spin-button, .qty-input-inv::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* --- GŁÓWNY PRZYCISK Z EFEKTEM 3D --- */
+  .main-atc-button {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    background: #4E54F0;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #3238b5;
+    transition: all 0.1s ease;
+    top: 0;
+  }
+
+  .main-atc-button:hover { 
+    filter: brightness(1.05);
+  }
+
+  .main-atc-button:active {
+    top: 3px;
+    box-shadow: 0 2px 0 #3238b5;
+  }
+
+  .wishlist-btn-small {
+    width: 42px;
+    height: 42px;
+    background: transparent;
+    border: 1px solid #e2e2e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #888;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  
+  .wishlist-btn-small:hover { border-color: #4E54F0; color: #4E54F0; }
+  .wishlist-btn-small svg { width: 18px; height: 18px; }
+
+  @media (max-width: 480px) {
+    .atc-flex-row { height: 46px; gap: 8px; }
+    .main-atc-button { font-size: 13px; box-shadow: 0 4px 0 #3238b5; }
+    .main-atc-button:active { top: 2px; box-shadow: 0 2px 0 #3238b5; }
+    .qty-container-slim { min-width: 80px; }
+    .wishlist-btn-small { width: 40px; height: 40px; }
+  }
+</style>

@@ -1,0 +1,143 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 6 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-accordion-pills', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="routines-accordion-pills">
+  
+  {%- comment -%} KARTA 1: Pojemność {%- endcomment -%}
+  {%- if product.metafields.custom.pojemnosc != blank -%}
+    <details class="routines-acc-pill-item">
+      <summary class="routines-acc-pill-header">
+        <span class="routines-acc-pill-title">Pojemność</span>
+        <span class="routines-acc-pill-arrow">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </summary>
+      <div class="routines-acc-pill-content">
+        <div class="routines-acc-pill-content-inner">
+          {{ product.metafields.custom.pojemnosc | metafield_tag }}
+        </div>
+      </div>
+    </details>
+  {%- endif -%}
+
+  {%- comment -%} KARTA 2: Składniki (INCI) {%- endcomment -%}
+  {%- if product.metafields.custom.skladniki_inci != blank -%}
+    <details class="routines-acc-pill-item">
+      <summary class="routines-acc-pill-header">
+        <span class="routines-acc-pill-title">Składniki (INCI)</span>
+        <span class="routines-acc-pill-arrow">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </summary>
+      <div class="routines-acc-pill-content">
+        <div class="routines-acc-pill-content-inner">
+          {{ product.metafields.custom.skladniki_inci | metafield_tag }}
+        </div>
+      </div>
+    </details>
+  {%- endif -%}
+
+</div>
+
+<style>
+  /* Import czcionek dla spójności */
+  .routines-accordion-pills {
+    margin: 15px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Odstęp między "pigułkami" */
+  }
+
+  /* STYL PIGUŁKI (Jak ramka Upsell) */
+  .routines-acc-pill-item {
+    border: 1px solid #e2e2e2;
+    border-radius: 60px; /* Pełne zaokrąglenie */
+    background: #fff;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  /* Zmiana zaokrąglenia przy otwarciu, żeby treść lepiej wyglądała */
+  .routines-acc-pill-item[open] {
+    border-radius: 25px; 
+    border-color: #4E54F0; /* Delikatne zaznaczenie otwartej karty kolorem Routines */
+  }
+
+  .routines-acc-pill-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px; /* Większy padding boczny dla pigułki */
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    user-select: none;
+  }
+
+  .routines-acc-pill-header::-webkit-details-marker { display: none; }
+
+  /* NAGŁÓWEK: Barlow 16px, Bold */
+  .routines-acc-pill-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    text-transform: none;
+  }
+
+  /* STRZAŁKA: Granat Routines #4E54F0 */
+  .routines-acc-pill-arrow {
+    margin-left: auto;
+    color: #4E54F0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+
+  /* Obrót strzałki przy otwarciu */
+  .routines-acc-pill-item[open] .routines-acc-pill-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* TREŚĆ */
+  .routines-acc-pill-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+  }
+
+  .routines-acc-pill-item[open] .routines-acc-pill-content {
+    max-height: 1000px;
+  }
+
+  .routines-acc-pill-content-inner {
+    padding: 0 25px 20px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444;
+  }
+
+  .routines-acc-pill-content-inner p {
+    margin: 0 0 10px 0 !important;
+  }
+
+  /* Efekt hover na pigułce */
+  .routines-acc-pill-item:hover {
+    border-color: #4E54F0;
+  }
+
+  @media (max-width: 767px) {
+    .routines-acc-pill-header {
+      padding: 10px 20px;
+    }
+    .routines-acc-pill-title {
+      font-size: 14px;
+    }
+    .routines-acc-pill-item {
+        border-radius: 40px; /* Nieco mniejszy promień na mobile */
+    }
+  }
+</style>

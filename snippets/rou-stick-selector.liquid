@@ -1,0 +1,129 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 3 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-stick-selector', product: product, section_id: section.id %}
+{% endcomment %}
+{% comment %} --- LOGIKA WYKRYWANIA AKTUALNEGO PRODUKTU --- {% endcomment %}
+{% assign current_url = product.url %}
+
+<div class="stick-selector-refined">
+  <p class="stick-refined-title">Rodzaj sztyftu:</p>
+
+  <div class="stick-refined-grid">
+    
+    {% comment %} SZTYFT 1: NAWILŻENIE {% endcomment %}
+    <a href="/products/sztyft-nawilzajacy-spf-50" 
+       class="stick-opt {% if current_url contains 'nawilzajacy' %}is-active{% endif %}">
+      <span class="swatch" style="background-color: #BEE3F8;"></span>
+      <span class="text">Nawilżenie</span>
+    </a>
+
+    {% comment %} SZTYFT 2: ŁAGODZĄCY {% endcomment %}
+    <a href="/products/sztyft-lagodzacy-spf-50" 
+       class="stick-opt {% if current_url contains 'lagodzacy' %}is-active{% endif %}">
+      <span class="swatch" style="background-color: #FFD9E2;"></span>
+      <span class="text">Łagodzenie</span>
+    </a>
+
+    {% comment %} SZTYFT 3: GLOW {% endcomment %}
+    <a href="/products/sztyft-spf-50-glow-stick" 
+       class="stick-opt {% if current_url contains 'glow-stick' %}is-active{% endif %}">
+      <span class="swatch" style="background-color: #FFE5CC;"></span>
+      <span class="text">Glow</span>
+    </a>
+
+  </div>
+</div>
+
+<style>
+  .stick-selector-refined {
+    margin: 20px 0 25px 0;
+    font-family: 'Poppins', sans-serif;
+    border-top: 1px solid #f2f2f2;
+    padding-top: 18px;
+  }
+
+  .stick-refined-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+  }
+
+  .stick-refined-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stick-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px 10px 12px; /* Powiększony padding */
+    border-radius: 50px;
+    border: 1.5px solid #eee; /* Nieco grubsza ramka */
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+  }
+
+  .swatch {
+    width: 18px; /* Powiększona kropka z 12px */
+    height: 18px;
+    border-radius: 50%;
+    display: block;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.25s ease;
+  }
+
+  .text {
+    font-size: 13px; /* Powiększony font */
+    font-weight: 500;
+    color: #333;
+  }
+
+  /* STAN AKTYWNY */
+  .stick-opt.is-active {
+    border-color: #000;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+
+  .stick-opt.is-active .text {
+    color: #000;
+    font-weight: 700;
+  }
+
+  .stick-opt.is-active .swatch {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #000; /* Wyraźniejszy pierścień */
+  }
+
+  /* HOVER */
+  .stick-opt:not(.is-active):hover {
+    border-color: #bbb;
+    transform: translateY(-1px);
+  }
+
+  /* MOBILE */
+  @media (max-width: 480px) {
+    .stick-refined-grid {
+      gap: 8px;
+    }
+    .stick-opt {
+      padding: 8px 14px 8px 10px;
+      flex: 1 1 auto; /* Na mobile pastylki mogą się nieco rozciągać, by wypełnić wiersz */
+      justify-content: center;
+    }
+    .text {
+      font-size: 12px;
+    }
+    .swatch {
+      width: 16px;
+      height: 16px;
+    }
+  }
+</style>

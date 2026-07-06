@@ -1,0 +1,84 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 7 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-nextgen-headers', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="custom-headers-container">
+  {%- if product.metafields.custom.kluczowe_sk_adniki != blank -%}
+    <div class="custom-ingredients-highlight">
+      {%- assign words = product.metafields.custom.kluczowe_sk_adniki | split: ' ' -%}
+      
+      {%- comment -%}Linia 1: Pierwsze dwa słowa{%- endcomment -%}
+      {{ words[0] }} {{ words[1] }}<br>
+      
+      {%- comment -%}Linia 2: Wszystko od trzeciego słowa wzwyż{%- endcomment -%}
+      {%- for word in words offset: 2 -%}
+        {{ word }}{% unless forloop.last %} {% endunless %}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  
+  {%- if product.metafields.custom.next_gen_nazwa_po_polsku != blank -%}
+    <div class="custom-metafield-heading">
+      {{ product.metafields.custom.next_gen_nazwa_po_polsku }}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .custom-headers-container { 
+    text-align: left; 
+    margin-bottom: 30px; 
+    width: 100%;
+  }
+
+  /* --- GŁÓWNY DUŻY NAGŁÓWEK --- */
+  .custom-ingredients-highlight {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 900;
+    font-style: italic;
+    color: #3b46ff; /* Start: Niebieski */
+    font-size: 95px;
+    line-height: 0.85; 
+    text-transform: uppercase;
+    letter-spacing: -4px; 
+    margin: 0 0 15px 0;
+    transition: color 0.4s ease;
+  }
+
+  /* PO ZMIANIE: Duży nagłówek bierze MIĘTOWY */
+  body.alt-vibe .custom-ingredients-highlight {
+    color: #a2d6cc !important; 
+  }
+
+  /* --- PODTYTUŁ (MAŁY NAGŁÓWEK) --- */
+  .custom-metafield-heading {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    color: #a2d6cc; /* Start: Miętowy */
+    font-size: 35px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.1;
+    display: inline-block;
+    transform: skewX(-7deg); 
+    transition: color 0.4s ease;
+  }
+
+  /* PO ZMIANIE: Podtytuł bierze GRANATOWY */
+  body.alt-vibe .custom-metafield-heading {
+    color: #4E54F0 !important; 
+  }
+
+  /* RWD dla telefonów */
+  @media screen and (max-width: 768px) {
+    .custom-ingredients-highlight { 
+      font-size: 60px; 
+      letter-spacing: -2px; 
+      line-height: 0.9;
+    }
+    .custom-metafield-heading { 
+      font-size: 24px; 
+    }
+  }
+</style>

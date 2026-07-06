@@ -1,0 +1,156 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 7 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-vibe-check', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="vibe-check-wrapper">
+  <span class="vibe-check-text">VIBE CHECK ✨</span>
+  
+  <label class="vibe-switch-pill">
+    <input type="checkbox" id="vibe-toggle-input">
+    <span class="vibe-slider-rainbow"></span>
+  </label>
+</div>
+
+<style>
+  /* --- 1. WYGLĄD SEKCJI I NAPISU --- */
+  .vibe-check-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 25px 0;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .vibe-check-text {
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: #333;
+    text-transform: uppercase;
+  }
+
+  /* --- 2. STYLIZACJA PASTYLKI --- */
+  .vibe-switch-pill {
+    position: relative;
+    display: inline-block;
+    width: 58px;
+    height: 30px;
+    cursor: pointer;
+  }
+
+  .vibe-switch-pill input { opacity: 0; width: 0; height: 0; }
+
+  /* Domyślny stan: Granatowy (#4E54F0) */
+  .vibe-slider-rainbow {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #4E54F0;
+    border-radius: 50px;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  /* Biała kropka */
+  .vibe-slider-rainbow:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  /* Stan aktywny: Tęcza */
+  input:checked + .vibe-slider-rainbow {
+    background: linear-gradient(
+      to right, 
+      #ff0000, #ff9900, #ffff00, #33ff00, #0099ff, #6633ff
+    );
+  }
+
+  input:checked + .vibe-slider-rainbow:before {
+    transform: translateX(28px);
+  }
+
+  /* --- 3. LOGIKA KOLORÓW DLA CAŁEJ KARTY --- */
+
+  /* Tryb Alt Vibe (Żółty/Neonowy) */
+  body.alt-vibe {
+    --vibe-bg: #FFF18C;
+    --vibe-accent: #EDB1CA;
+    --vibe-neon: #bfff00; /* Neonowa zieleń dla zakreślacza */
+  }
+
+  /* Wymuszenie żółtego tła w Twoim kontenerze HDT */
+  body.alt-vibe .hdt-container-full {
+    background-color: var(--vibe-bg) !important;
+    background-image: none !important;
+    --hdt-color-background: var(--vibe-bg) !important;
+    --color-background: var(--vibe-bg) !important;
+  }
+
+  /* Przycisk ATC: Różowy tło + CZARNY napis */
+  body.alt-vibe .main-atc-button {
+    background-color: var(--vibe-accent) !important;
+    color: #000000 !important;
+  }
+  
+  body.alt-vibe .main-atc-button span, 
+  body.alt-vibe .main-atc-button .btn-text {
+    color: #000000 !important;
+  }
+
+  /* Selektor ilości: Różowe obramowanie */
+  body.alt-vibe .qty-container-slim {
+    border-color: var(--vibe-accent) !important;
+  }
+  body.alt-vibe .qty-btn-inv, 
+  body.alt-vibe .qty-input-inv {
+    color: var(--vibe-accent) !important;
+  }
+
+  /* Płynne przejście tła dla kontenera */
+  .hdt-container-full {
+    transition: background-color 0.4s ease !important;
+  }
+</style>
+
+<script>
+  (function() {
+    const initVibeSwitcher = () => {
+      const toggle = document.querySelector('#vibe-toggle-input');
+      const body = document.body;
+
+      if (!toggle) return;
+
+      const setVibe = (isAlt) => {
+        if (isAlt) {
+          body.classList.add('alt-vibe');
+        } else {
+          body.classList.remove('alt-vibe');
+        }
+      };
+
+      // Sprawdzanie pamięci po odświeżeniu
+      if (localStorage.getItem('next-gen-vibe-state') === 'active') {
+        toggle.checked = true;
+        setVibe(true);
+      }
+
+      toggle.addEventListener('change', function() {
+        setVibe(this.checked);
+        localStorage.setItem('next-gen-vibe-state', this.checked ? 'active' : 'default');
+      });
+    };
+
+    initVibeSwitcher();
+    document.addEventListener('shopify:section:load', initVibeSwitcher);
+  })();
+</script>

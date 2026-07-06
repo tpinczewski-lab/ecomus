@@ -1,0 +1,99 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 3 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-price-box-c', product: product, section_id: section.id %}
+{% endcomment %}
+{%- comment -%} LOGIKA CENOWA {%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign current_price = current_variant.price
+  assign compare_price = current_variant.compare_at_price | default: 0
+  assign suggested_price = product.metafields.custom.cena_sugerowana.value | default: 0
+  
+  # Obliczanie procentowych obniżek (tylko jeśli cena sprzedaży jest niższa od odniesienia)
+  assign disc_suggested = 0
+  if suggested_price > current_price
+    assign diff = suggested_price | minus: current_price
+    assign disc_suggested = diff | times: 100.0 | divided_by: suggested_price | round
+  endif
+
+  assign disc_compare = 0
+  if compare_price > current_price
+    assign diff = compare_price | minus: current_price
+    assign disc_compare = diff | times: 100.0 | divided_by: compare_price | round
+  endif
+  
+  # Pobieranie pojemności i obliczanie ceny za 100ml
+  assign volume = product.metafields.custom.pojemnosc.value | default: 50 | remove: 'ml' | strip | plus: 0
+  assign unit_price_100ml = current_price | times: 1.0 | divided_by: volume | times: 100
+  
+  # Promocja aktywna, jeśli cena jest niższa od którejkolwiek ceny odniesienia
+  assign is_on_sale = false
+  if suggested_price > current_price or compare_price > current_price
+    assign is_on_sale = true
+  endif
+
+  assign newsletter_price = current_price | times: 0.85
+-%}
+
+<style>
+  .p-section-final { font-family: 'Barlow', sans-serif; color: #1A1A1A; max-width: 550px; margin: 10px 0; }
+  .p-flex-container { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .p-price-row { display: flex; align-items: center; gap: 10px; line-height: 1; margin-bottom: 8px; }
+  .p-main-val { font-size: 32px; font-weight: 700; color: #000; }
+  .p-main-val.is-sale { color: #D32F2F; }
+  
+  .p-sale-badge { background-color: #D32F2F; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
+  
+  .p-unit-info { font-size: 16px; color: #000; font-weight: 500; margin-top: 5px; }
+  .p-unit-info strong { font-weight: 700; }
+  
+  .p-ref-price { font-size: 13px; color: #868686; margin-top: 6px; line-height: 1.5; }
+  .p-ref-val { font-weight: 600; color: #000; }
+  .p-disc-val { color: #D32F2F; font-weight: 600; }
+  
+  .p-newsletter-box { flex: 1; border-left: 1px solid #E0E0E0; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; }
+  .p-news-price { display: block; font-size: 16px; font-weight: 600; }
+  .p-news-trigger { background: none; border: none; padding: 0; text-align: left; font-size: 11px; text-decoration: underline; cursor: pointer; color: #555; }
+</style>
+
+<div class="p-section-final">
+  <div class="p-flex-container">
+    <div class="p-info-main">
+      <div class="p-price-row">
+        <span class="p-main-val {% if is_on_sale %}is-sale{% endif %}">{{ current_price | money }}</span>
+        {% if is_on_sale %}<span class="p-sale-badge">OKAZJA</span>{% endif %}
+      </div>
+      
+      <div class="p-unit-info">
+        Pojemność: <strong>{{ volume }} g</strong> ({{ unit_price_100ml | money }} / 100 g)
+      </div>
+
+      <div class="p-ref-price">
+        {% if suggested_price > 0 %}
+          <div>Cena sugerowana: <span class="p-ref-val">{{ suggested_price | money }}</span> 
+            {% if disc_suggested > 0 %}<span class="p-disc-val">(-{{ disc_suggested }}%)</span>{% endif %}
+          </div>
+        {% endif %}
+        {% if compare_price > 0 %}
+          <div>Najniższa cena z 30 dni: <span class="p-ref-val">{{ compare_price | money }}</span> 
+            {% if disc_compare > 0 %}<span class="p-disc-val">(-{{ disc_compare }}%)</span>{% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% unless is_on_sale %}
+      <div class="p-newsletter-box">
+        <span class="p-news-price">{{ newsletter_price | money }} z kodem</span>
+        <button type="button" class="p-news-trigger" onclick="openKlaviyoForm()">Zapisz się do newslettera i odbierz kod</button>
+      </div>
+    {% endunless %}
+  </div>
+</div>
+
+<script>
+  function openKlaviyoForm() {
+    if (window._klOnsite) { window._klOnsite.push(['openForm', 'WCWzaD']); }
+  }
+</script>

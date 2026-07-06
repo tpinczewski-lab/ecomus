@@ -1,0 +1,45 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 6 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-promo-badge', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="custom-promo-badge-container">
+  <span class="pill-badge-promo">
+    -25% z kodem: SUN
+  </span>
+</div>
+
+<style>
+  /* Styl domyślny (Desktop / większe ekrany) */
+  .custom-promo-badge-container {
+    margin: 10px 0;
+    display: block;
+    line-height: 1;
+  }
+
+  .pill-badge-promo {
+    display: inline-block;
+    background-color: #B9FF45; /* Limonkowy */
+    color: #000000;            /* Czarny napis */
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Styl na Mobile (Ekrany mniejsze niż 767px) */
+  @media screen and (max-width: 767px) {
+    .pill-badge-promo {
+      font-size: 11px;
+      padding: 5px 12px;
+      letter-spacing: 0.3px;
+    }
+    
+    .custom-promo-badge-container {
+      margin: 8px 0;
+    }
+  }
+</style>

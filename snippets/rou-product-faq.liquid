@@ -1,0 +1,81 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 31 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-product-faq', product: product, section_id: section.id %}
+{% endcomment %}
+{% assign how_to_use = product.metafields.custom.jak_uzywac %}
+{% assign key_ingredients = product.metafields.custom.kluczowe_skladniki_opisy %}
+
+<div class="routines-acc" itemscope itemtype="https://schema.org/FAQPage">
+  
+  {% if how_to_use != blank %}
+  <details class="acc-item" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+    <summary class="acc-head" itemprop="name">JAK UŻYWAĆ <span class="acc-icon">+</span></summary>
+    <div class="acc-body" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+      <div itemprop="text" class="rte">
+        {{ how_to_use | metafield_tag }}
+      </div>
+    </div>
+  </details>
+  {% endif %}
+
+  {% if key_ingredients != blank %}
+  <details class="acc-item" itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+    <summary class="acc-head" itemprop="name">KLUCZOWE SKŁADNIKI <span class="acc-icon">+</span></summary>
+    <div class="acc-body" itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+      <div itemprop="text" class="rte">
+        {{ key_ingredients | metafield_tag }}
+      </div>
+    </div>
+  </details>
+  {% endif %}
+
+  <details class="acc-item" id="product-ask-acc">
+    <summary class="acc-head">ZAPYTAJ O PRODUKT <span class="acc-icon">+</span></summary>
+    <div class="acc-body">
+      {% form 'contact', id: 'ProductContactForm', class: 'acc-form-compact' %}
+        {% if form.posted_successfully? %}
+          <div class="form-success-message">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#2d8a2d" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Wiadomość wysłana! Odpowiemy na <strong>hello@routines.pl</strong> w ciągu 24h.</span>
+          </div>
+        {% else %}
+          {% if form.errors %}
+            <div class="form-error-message">Ups! Sprawdź czy e-mail jest poprawny.</div>
+          {% endif %}
+
+          <div class="form-inputs-wrapper">
+            <input type="hidden" name="contact[subject]" value="Pytanie o produkt: {{ product.title }}">
+            <input type="email" name="contact[email]" placeholder="Twój e-mail" required class="acc-input">
+            <input type="text" name="contact[body]" placeholder="Twoje pytanie..." required class="acc-input">
+            <button type="submit" class="acc-submit-btn">WYŚLIJ</button>
+          </div>
+        {% endif %}
+      {% endform %}
+    </div>
+  </details>
+</div>
+
+<style>
+.routines-acc { width: 100%; background: #fff; border-top: 1px solid #eee; margin: 20px 0; }
+.acc-item { border-bottom: 1px solid #eee; background: #fff; }
+.acc-head { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; cursor: pointer; list-style: none; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+.acc-head::-webkit-details-marker { display: none; }
+.acc-icon { font-size: 18px; font-weight: 300; transition: transform .3s; }
+.acc-item[open] .acc-icon { transform: rotate(45deg); }
+.acc-body { padding: 0 5px 20px; font-size: 14px; line-height: 1.5; color: #333; }
+.rte p { margin-bottom: 10px; }
+.rte strong { font-weight: 700; }
+
+/* Formularz */
+.acc-form-compact { margin-top: 5px; }
+.form-inputs-wrapper { display: flex; gap: 8px; align-items: center; }
+.acc-input { flex: 1; border: 1px solid #e8e8e8; padding: 10px; font-size: 13px; border-radius: 0; background: #f9f9f9; }
+.acc-submit-btn { background: #000; color: #fff; border: none; padding: 10px 20px; cursor: pointer; font-weight: 700; font-size: 11px; height: 40px; }
+.form-success-message { display: flex; align-items: center; gap: 10px; color: #2d8a2d; font-size: 13px; background: #f0f9f0; padding: 10px; }
+
+@media(max-width:768px) {
+  .form-inputs-wrapper { flex-direction: column; align-items: stretch; }
+  .acc-submit-btn { width: 100%; }
+}
+</style>

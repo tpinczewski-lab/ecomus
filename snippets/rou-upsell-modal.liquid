@@ -1,0 +1,194 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 7 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-upsell-modal', product: product, section_id: section.id %}
+{% endcomment %}
+{%- liquid
+  assign upsell_products = product.metafields.custom.upsell.value
+-%}
+
+{%- if upsell_products != blank -%}
+<div class="routines-upsell-wrapper" onclick="openRoutinesModal()">
+  <div class="routines-pill-bar">
+    <div class="routines-icon-stack">
+      {%- for item in upsell_products limit: 5 -%}
+        <img src="{{ item.featured_media | image_url: width: 150 }}"
+             width="150" height="150" loading="lazy"
+             class="routines-rotating-icon {% if forloop.first %}is-visible{% endif %}"
+             alt="upsell icon">
+      {%- endfor -%}
+    </div>
+    <div class="routines-text-content">
+      <span class="routines-label-title">Świetnie pasuje do pozostałych produktów NEXT GEN</span>
+      <span class="routines-label-sub">Dobierz do swojej pielęgnacji</span>
+    </div>
+    <div class="routines-arrow-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
+</div>
+
+<div id="RoutinesUpsellModal" class="routines-modal-overlay">
+  <div class="fit-modal-backdrop" onclick="closeRoutinesModal()"></div>
+  <div class="routines-modal-container">
+    <button class="routines-modal-close" onclick="closeRoutinesModal()">✕</button>
+    
+    <div class="routines-modal-header">
+      <h3>Dodaj do swojej pielęgnacji</h3>
+    </div>
+
+    <div class="routines-products-grid">
+      {%- for item in upsell_products -%}
+        <div class="routines-product-card">
+          <div class="routines-card-media">
+             <a href="{{ item.url }}">
+              <img src="{{ item.featured_media | image_url: width: 400 }}" alt="{{ item.title }}" width="400" height="400" loading="lazy">
+             </a>
+          </div>
+          
+          <div class="routines-card-info">
+            <h3 class="routines-card-title">{{ item.title }}</h3>
+            <div class="routines-card-price">{{ item.price | money }}</div>
+
+            <button type="button" 
+                    class="routines-atc-btn-3d" 
+                    onclick="addUpsellToCart(this, '{{ item.first_available_variant.id }}')">
+              <span class="btn-text">DODAJ DO KOSZYKA</span>
+            </button>
+            
+            <a href="{{ item.url }}" class="routines-details-link">Zobacz szczegóły produktu</a>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  /* --- TRIGGER BAR --- */
+  .routines-upsell-wrapper { margin: 25px 0; width: 100%; font-family: 'Poppins', sans-serif; }
+  .routines-pill-bar { 
+    display: flex; align-items: center; padding: 15px 25px; 
+    border: 1px solid #e2e2e2; border-radius: 60px; 
+    background: #fff; cursor: pointer; transition: all 0.2s ease;
+  }
+  .routines-pill-bar:hover { border-color: #4E54F0; box-shadow: 0 4px 12px rgba(78, 84, 240, 0.1); }
+  
+  .routines-icon-stack { position: relative; width: 60px; height: 60px; margin-right: 20px; flex-shrink: 0; }
+  .routines-rotating-icon { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.5s ease; }
+  .routines-rotating-icon.is-visible { opacity: 1; }
+
+  .routines-text-content { display: flex; flex-direction: column; flex-grow: 1; }
+  .routines-label-title { font-size: 16px; font-weight: 700; color: #000; line-height: 1.2; }
+  .routines-label-sub { font-size: 13px; color: #888; margin-top: 2px; }
+  .routines-arrow-icon { color: #4E54F0; margin-left: 10px; display: flex; align-items: center; }
+
+  /* --- MODAL --- */
+  .routines-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: none; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; }
+  .routines-modal-overlay.active { display: flex; }
+  .fit-modal-backdrop { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); }
+  .routines-modal-container { position: relative; width: 95%; max-width: 1250px; max-height: 85vh; padding: 40px 20px; overflow-y: auto; z-index: 10001; }
+  .routines-modal-close { position: absolute; top: 0; right: 20px; border: none; background: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+  /* NAGŁÓWEK: Barlow 25px */
+  .routines-modal-header h3 { 
+    text-align: center !important; 
+    font-family: 'Barlow', sans-serif !important; 
+    font-size: 25px !important; 
+    margin-bottom: 30px !important; 
+    font-weight: 600 !important; 
+    color: #fff !important; 
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    text-transform: none !important;
+  }
+
+  /* --- KARTY PRODUKTÓW (LAYOUT) --- */
+  .routines-products-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+  .routines-product-card { flex: 0 1 290px; display: flex; flex-direction: column; background: #fff; border: 1px solid #eee; border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; }
+  .routines-card-media { width: 100%; height: 150px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .routines-card-media img { max-width: 100% !important; max-height: 150px !important; width: auto !important; height: auto !important; object-fit: contain !important; }
+  
+  .routines-card-title { font-size: 15px; font-weight: 600; margin: 0 0 4px 0; color: #000; text-align: center; line-height: 1.4; }
+  .routines-card-price { font-weight: 700; color: #4E54F0; font-size: 17px; margin: 0 0 20px 0; text-align: center; }
+
+  /* PRZYCISK 3D */
+  .routines-atc-btn-3d { 
+    position: relative;
+    background: #4E54F0 !important; color: white !important; 
+    border: none; width: 100%; padding: 15px; border-radius: 50px; 
+    font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 13px; 
+    cursor: pointer; box-shadow: 0 5px 0 #3238b5; transition: all 0.1s ease; top: 0;
+  }
+  .routines-atc-btn-3d:active { top: 3px; box-shadow: 0 2px 0 #3238b5; }
+  .routines-details-link { display: block; margin-top: 15px; font-size: 11px; color: #bbb; text-decoration: underline; text-align: center; }
+
+  /* --- KARUZELA MOBILE --- */
+  @media (max-width: 767px) {
+    .routines-modal-container { padding: 40px 0 20px 0; width: 100%; }
+    .routines-modal-header h3 { font-size: 20px !important; padding: 0 20px; }
+    .routines-products-grid {
+      flex-wrap: nowrap !important;
+      justify-content: flex-start !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 20px 20px 20px;
+      gap: 15px;
+      scrollbar-width: none;
+    }
+    .routines-products-grid::-webkit-scrollbar { display: none; }
+    .routines-product-card { flex: 0 0 75% !important; scroll-snap-align: start; padding: 15px; border-radius: 18px; }
+    .routines-icon-stack { width: 50px; height: 50px; margin-right: 12px; }
+    .routines-label-title { font-size: 14px; }
+    .routines-label-sub { font-size: 12px; }
+  }
+</style>
+
+<script>
+function openRoutinesModal() {
+  document.getElementById('RoutinesUpsellModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRoutinesModal() {
+  document.getElementById('RoutinesUpsellModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function addUpsellToCart(button, variantId) {
+  let btnText = button.querySelector('.btn-text');
+  const originalText = btnText.innerText;
+  btnText.innerText = 'DODAJE...';
+  button.disabled = true;
+
+  fetch(window.Shopify.routes.root + 'cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 'items': [{ 'id': variantId, 'quantity': 1 }] })
+  })
+  .then(response => response.json())
+  .then(item => {
+    btnText.innerText = 'DODANO! 👍';
+    document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: item } }));
+    document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+
+    const cartDrawer = document.querySelector('cart-drawer') || document.querySelector('#CartDrawer');
+    if (cartDrawer && typeof cartDrawer.open === 'function') {
+        setTimeout(() => { closeRoutinesModal(); cartDrawer.open(); }, 600);
+    }
+    setTimeout(() => { btnText.innerText = originalText; button.disabled = false; }, 2000);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const icons = document.querySelectorAll('.routines-rotating-icon');
+  if (icons.length <= 1) return;
+  let current = 0;
+  setInterval(() => {
+    icons[current].classList.remove('is-visible');
+    current = (current + 1) % icons.length;
+    icons[current].classList.add('is-visible');
+  }, 2000);
+});
+</script>
+{%- endif -%}

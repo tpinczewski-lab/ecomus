@@ -1,0 +1,108 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 11 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-atc-form-b', product: product, section_id: section.id %}
+{% endcomment %}
+<div class="custom-atc-wrapper">
+  {%- form 'product', product, id: 'custom-atc-form' -%}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+    <div class="atc-flex-row">
+      <div class="qty-container-slim">
+        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+        <input type="number" name="quantity" value="1" min="1" class="qty-input-inv no-arrows">
+        <button type="button" class="qty-btn-inv" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+      </div>
+
+      <button type="submit" name="add" class="main-atc-button" id="AddToCart-Button">
+        <span class="btn-text">DODAJ DO KOSZYKA</span>
+      </button>
+
+      <button type="button" class="wishlist-btn-small" data-product-handle="{{ product.handle }}" id="wishlist-trigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </button>
+    </div>
+  {%- endform -%}
+</div>
+
+<script>
+  // DODAWANIE DO KOSZYKA
+  document.querySelector('#custom-atc-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+    fetch(window.Shopify.routes.root + 'cart/add.js', { method: 'POST', body: formData })
+    .then(response => response.json())
+    .then(item => {
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: item } }));
+      const drawer = document.querySelector('cart-drawer') || document.querySelector('#CartDrawer');
+      if (drawer && typeof drawer.open === 'function') drawer.open();
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+    }).catch(err => console.error(err));
+  });
+
+  // LOGIKA LISTY ŻYCZEŃ
+  (function() {
+    const btn = document.getElementById('wishlist-trigger');
+    const handle = btn.getAttribute('data-product-handle');
+    const STORAGE_KEY = 'shopify-wishlist';
+
+    let wishlist = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    if (wishlist.includes(handle)) btn.classList.add('is-active');
+
+    btn.addEventListener('click', function() {
+      wishlist = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const index = wishlist.indexOf(handle);
+
+      if (index > -1) {
+        wishlist.splice(index, 1);
+        this.classList.remove('is-active');
+      } else {
+        wishlist.push(handle);
+        this.classList.add('is-active');
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishlist));
+      document.dispatchEvent(new CustomEvent('wishlist:updated'));
+    });
+  })();
+</script>
+
+<style>
+  .custom-atc-wrapper { margin: 15px 0; width: 100%; }
+  .atc-flex-row { display: flex; gap: 10px; align-items: center; height: 48px; }
+
+  /* SELEKTOR */
+  .qty-container-slim { display: flex; align-items: center; background: #fff; border: 1px solid #000; height: 100%; min-width: 90px; }
+  .qty-btn-inv { background: transparent; border: none; color: #000; cursor: pointer; font-size: 18px; width: 30px; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .qty-input-inv { background: transparent; border: none; color: #000; text-align: center; width: 30px; font-weight: 700; font-family: inherit; font-size: 14px; }
+  .no-arrows::-webkit-outer-spin-button, .no-arrows::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* PRZYCISK ATC */
+  .main-atc-button { flex: 1; height: 100%; background: #000; color: #fff; border: none; font-weight: 700; letter-spacing: 1px; cursor: pointer; font-size: 14px; }
+
+  /* PRZYCISK WISHLIST */
+  .wishlist-btn-small { 
+    width: 48px; height: 48px; background: transparent; border: 1px solid #000; 
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000; 
+    flex-shrink: 0;
+  }
+  .wishlist-btn-small svg { width: 22px; height: 22px; transition: all 0.2s ease; }
+
+  .wishlist-btn-small.is-active { border-color: #ff0000; color: #ff0000; }
+  .wishlist-btn-small.is-active svg { fill: #ff0000; stroke: #ff0000; }
+
+  /* POPRAWKI DLA MOBILE */
+  @media (max-width: 480px) { 
+    .atc-flex-row { height: 44px; gap: 6px; } 
+    
+    .qty-container-slim { min-width: 75px; } /* Zmniejszona szerokość całkowita */
+    .qty-btn-inv { width: 25px; font-size: 16px; } /* Węższe przyciski +/- */
+    .qty-input-inv { width: 25px; font-size: 13px; } /* Węższe pole wpisywania */
+    
+    .main-atc-button { font-size: 12px; letter-spacing: 0.5px; }
+    
+    .wishlist-btn-small { width: 44px; height: 44px; } /* Dopasowanie do wysokości rzędu */
+  }
+</style>

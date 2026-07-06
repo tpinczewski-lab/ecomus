@@ -104,7 +104,7 @@
       render 'structured-data'
     -%}
     {%- endunless -%}
-  {%- render "ecom_footer"-%}<script
+  {%- render "ecom_footer"-%}<script defer
 src='//eu.fw-cdn.com/12629817/648640.js'
 chat='true' widgetId='2b717cb9-d4f5-4370-a6dc-d7d9a581aedc'>
 </script>
@@ -146,11 +146,21 @@ chat='true' widgetId='2b717cb9-d4f5-4370-a6dc-d7d9a581aedc'>
   setTimeout(arrangeOnce, 500);
   setTimeout(arrangeOnce, 1500);
 
-  // obserwator DOM (np. zmiana wariantu, Ajax itp.)
+  // dotyczy tylko karty produktu — na innych stronach nie obserwuj DOM
+  if (!document.body.classList.contains('hdt-page-type-product')) return;
+
+  // obserwator DOM (np. zmiana wariantu, Ajax itp.) — zbija serie mutacji do max 1 sprawdzenia na klatkę
+  let scheduled = false;
   const observer = new MutationObserver(function () {
-    arrangeOnce();
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () {
+      scheduled = false;
+      arrangeOnce();
+    });
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  const target = document.getElementById('MainContent') || document.body;
+  observer.observe(target, { childList: true, subtree: true });
 })();
 </script>
 <script>

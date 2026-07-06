@@ -1,0 +1,70 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 7 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-nextgen-features', product: product, section_id: section.id %}
+{% endcomment %}
+{%- assign cecha1 = product.metafields.custom.next_cecha_1 -%}
+{%- assign cecha2 = product.metafields.custom.next_cecha_2 -%}
+{%- assign cecha3 = product.metafields.custom.next_cecha_3 -%}
+
+{%- if cecha1 != blank or cecha2 != blank or cecha3 != blank -%}
+<div class="notebook-features-container">
+  {%- if cecha1 != blank -%}<div class="notebook-row"><div class="arrow-container"><svg class="sketch-arrow" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 25 C 10 23, 15 27, 20 25 S 30 23, 35 25 S 40 27, 45 25" stroke-linecap="round"/><path d="M35 15 Q 43 23, 45 25 Q 43 27, 35 35" stroke-linecap="round"/></svg></div><div class="notebook-text">{{ cecha1 | metafield_tag }}</div></div>{%- endif -%}
+  {%- if cecha2 != blank -%}<div class="notebook-row"><div class="arrow-container"><svg class="sketch-arrow" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 25 C 10 23, 15 27, 20 25 S 30 23, 35 25 S 40 27, 45 25" stroke-linecap="round"/><path d="M35 15 Q 43 23, 45 25 Q 43 27, 35 35" stroke-linecap="round"/></svg></div><div class="notebook-text">{{ cecha2 | metafield_tag }}</div></div>{%- endif -%}
+  {%- if cecha3 != blank -%}<div class="notebook-row"><div class="arrow-container"><svg class="sketch-arrow" viewBox="0 0 50 50" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 25 C 10 23, 15 27, 20 25 S 30 23, 35 25 S 40 27, 45 25" stroke-linecap="round"/><path d="M35 15 Q 43 23, 45 25 Q 43 27, 35 35" stroke-linecap="round"/></svg></div><div class="notebook-text">{{ cecha3 | metafield_tag }}</div></div>{%- endif -%}
+</div>
+
+<style>
+  :root { --nb-grid: rgba(160,200,240,0.3); --nb-ink: #1e3a8a; --nb-margin: #ffb3b3; }
+
+  body.alt-vibe {
+    --nb-grid: rgba(230, 211, 90, 0.4); 
+    --nb-ink: #912c52;                 
+    --nb-margin: #9DD3C9;              
+    --nb-neon: #bfff00; 
+  }
+
+  /* WYMUSZENIE TŁA I ATC */
+  body.alt-vibe .hdt-container-full { background-color: #FFF18C !important; background-image: none !important; --hdt-color-background: #FFF18C !important; }
+  body.alt-vibe .main-atc-button { background-color: #EDB1CA !important; color: #000 !important; }
+  body.alt-vibe .main-atc-button span { color: #000 !important; }
+
+  .notebook-features-container {
+    background-color: #fdfdfd;
+    background-image: linear-gradient(90deg, transparent 49px, var(--nb-margin) 50px, var(--nb-margin) 51px, transparent 52px), linear-gradient(90deg, var(--nb-grid) 1px, transparent 1px), linear-gradient(var(--nb-grid) 1px, transparent 1px);
+    background-size: 100% 100%, 24px 24px, 24px 24px;
+    border: 1px solid #d1d5db; border-radius: 4px; padding: 24px 20px 24px 65px; margin: 20px 0;
+    display: flex; flex-direction: column; transition: 0.4s;
+  }
+
+  .notebook-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; min-height: 24px; }
+  .arrow-container { flex-shrink: 0; height: 24px; display: flex; align-items: center; }
+  .sketch-arrow { width: 26px; height: 26px; color: var(--nb-ink); }
+
+  .notebook-text {
+    font-family: 'Caveat', cursive; font-size: 24px; color: var(--nb-ink);
+    line-height: 24px; word-break: break-word;
+  }
+  .notebook-text p { margin: 0 !important; line-height: 24px !important; }
+
+  /* ZAKREŚLACZ FIX - TEKST JUŻ NIE NACHODZI */
+  .notebook-text strong, .notebook-text b {
+    font-weight: 700; color: var(--nb-ink); text-decoration: none;
+    display: inline; border-bottom: 2px solid #ef4444; transition: 0.2s;
+  }
+
+  body.alt-vibe .notebook-text strong, body.alt-vibe .notebook-text b {
+    border-bottom: none;
+    box-shadow: inset 0 -11px 0 0 var(--nb-neon); /* Zakreślacz pod tekstem */
+    padding: 0 2px;
+    line-height: inherit !important;
+  }
+
+  @media (max-width: 768px) {
+    .notebook-features-container { background-size: 100% 100%, 22px 22px, 22px 22px; padding: 22px 12px 22px 55px; background-image: linear-gradient(90deg, transparent 44px, var(--nb-margin) 45px, var(--nb-margin) 46px, transparent 47px), linear-gradient(90deg, var(--nb-grid) 1px, transparent 1px), linear-gradient(var(--nb-grid) 1px, transparent 1px); }
+    .notebook-text { font-size: 20px; line-height: 22px; }
+    .notebook-text p { line-height: 22px !important; }
+    body.alt-vibe .notebook-text strong, body.alt-vibe .notebook-text b { box-shadow: inset 0 -9px 0 0 var(--nb-neon); }
+  }
+</style>
+{%- endif -%}

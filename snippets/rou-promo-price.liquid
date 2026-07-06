@@ -1,0 +1,209 @@
+{% comment %}
+  Wspólny blok kart produktu (używany w 6 miejscach w szablonach product.*).
+  Edytuj TUTAJ — zmiana obejmie wszystkie karty produktów, które go renderują.
+  Wywołanie: {% render 'rou-promo-price', product: product, section_id: section.id %}
+{% endcomment %}
+{%- assign variant = product.selected_or_first_available_variant -%}
+{%- assign discount_code = "SUN" -%}
+{%- assign discount_percentage = 25 -%}
+
+{%- comment -%} Obliczenia ceny z kodem {%- endcomment -%}
+{%- assign multiplier = 100 | minus: discount_percentage -%}
+{%- assign discounted_price = variant.price | times: multiplier | divided_by: 100 -%}
+
+{%- comment -%} Pobranie danych Omnibus {%- endcomment -%}
+{%- assign omnibus_meta = variant.metafields['app--320503809--omnibus'] -%}
+{%- assign omnibus_price_val = omnibus_meta.price.value | default: omnibus_meta.price -%}
+{%- assign omnibus_history_val = omnibus_meta.priceHistory.value | default: omnibus_meta.priceHistory -%}
+
+<div class="promo-box-final-left">
+  <div class="promo-top-section">
+    <div class="promo-price-flex">
+      <span class="promo-price-red">{{ discounted_price | money }}</span>
+      <div class="promo-code-box">
+        <span class="promo-code-label">z kodem <strong class="promo-code-highlight">{{ discount_code }}</strong></span>
+        <button class="promo-copy-trigger" onclick="copyDiscount('{{ discount_code }}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span class="copy-tooltip">SKOPIOWANO!</span>
+        </button>
+      </div>
+    </div>
+    <p class="promo-small-info">Kod wpisz w koszyku.</p>
+  </div>
+
+  <div class="promo-hr-line"></div>
+
+  <div class="promo-bottom-section">
+    <p class="promo-detail-line">Aktualna cena <span class="promo-strike">{{ variant.price | money }}</span> <span class="promo-red-tag">-{{ discount_percentage }}%</span></p>
+    
+    {%- if omnibus_price_val != blank -%}
+      <p class="promo-detail-line">Najniższa cena z 30 dni: <span>{{ omnibus_price_val | money }}</span></p>
+    {%- endif -%}
+
+    {%- comment -%} Logika sprawdzania ceny Omnibus {%- endcomment -%}
+    {%- assign o_price_num = omnibus_price_val.amount | default: omnibus_price_val | plus: 0 -%}
+    {%- assign o_hist_num = omnibus_history_val.amount | default: omnibus_history_val | plus: 0 -%}
+    
+    {%- if discounted_price < o_price_num or discounted_price < o_hist_num -%}
+      <p class="promo-omnibus-warning">
+        Ta cena jest niższa niż najniższa cena produktu z ostatnich 30 dni.
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+function copyDiscount(text) {
+  const trigger = document.querySelector('.promo-copy-trigger');
+  const tooltip = trigger.querySelector('.copy-tooltip');
+  
+  navigator.clipboard.writeText(text).then(() => {
+    tooltip.classList.add('is-active');
+    setTimeout(() => {
+      tooltip.classList.remove('is-active');
+    }, 2000);
+  });
+}
+</script>
+
+<style>
+  .promo-box-final-left {
+    background-color: #f6f6f6;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 16px;
+    margin: 20px 0;
+    font-family: 'Poppins', sans-serif;
+    text-align: left !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .promo-top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .promo-price-flex {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .promo-price-red {
+    font-size: 26px;
+    font-weight: 800;
+    color: #d10000;
+    line-height: 1;
+  }
+
+  .promo-code-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    color: #333;
+    position: relative;
+  }
+
+  .promo-code-highlight {
+    color: #d10000;
+    font-weight: 800;
+  }
+
+  .promo-copy-trigger {
+    background: #ffffff;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 3px 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #666;
+    transition: background 0.2s;
+  }
+
+  .promo-copy-trigger:hover {
+    background: #f0f0f0;
+  }
+
+  .copy-tooltip {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    color: #fff;
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .copy-tooltip.is-active {
+    opacity: 1;
+  }
+
+  .promo-small-info {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+    text-align: left;
+  }
+
+  .promo-hr-line {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 14px 0;
+    width: 100%;
+  }
+
+  .promo-bottom-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  .promo-detail-line {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+    text-align: left;
+  }
+
+  .promo-strike {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  .promo-red-tag {
+    color: #d10000;
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  .promo-omnibus-warning {
+    margin-top: 8px !important;
+    color: #000000;
+    font-weight: 400;
+    font-size: 13px;
+    padding-top: 8px;
+    border-top: 1px dashed #d1d1d1;
+    width: 100%;
+    text-align: left;
+  }
+
+  @media (max-width: 480px) {
+    .promo-price-red { font-size: 22px; }
+    .promo-box-final-left { padding: 12px; }
+    .promo-code-box { font-size: 13px; }
+  }
+</style>
